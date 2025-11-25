@@ -1,0 +1,1079 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ExpireMe — Home</title>
+  <style>
+    :root{
+      --bg:#f6fafb; --card:#ffffff; --muted:#6b7280; --accent:#138496; --accent-2:#2b7cff;
+      --danger:#d9534f; --success:#0f5132; --glass: rgba(19,128,140,0.06);
+      --radius:12px; --container:1100px;
+      --shadow:0 8px 20px rgba(23,43,77,0.08);
+    }
+    html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#f0f7f8 0%,var(--bg)100%);color:#21303b}
+    .wrap{max-width:var(--container);margin:28px auto;padding:20px;display:flex;gap:20px;align-items:flex-start}
+    .main{flex:1;display:flex;flex-direction:column;gap:18px}
+    .sidebar{width:320px;display:flex;flex-direction:column;gap:18px}
+    header.top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:transparent}
+    .profile{display:flex;align-items:center;gap:12px}
+    .avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#ffe9c6,#ffd7a8);display:flex;align-items:center;justify-content:center;font-weight:700;color:#7a4b08}
+    .greeting{font-size:18px;font-weight:600}
+    .icons{display:flex;gap:12px;align-items:center}
+    .icon-btn{width:36px;height:36px;border-radius:8px;display:inline-grid;place-items:center;background:var(--card);box-shadow:var(--shadow);cursor:pointer}
+    .hero{background:linear-gradient(180deg,#0fa3a7 0%,#137b7c 100%);color:#fff;padding:20px;border-radius:14px;box-shadow:var(--shadow);display:flex;gap:18px;align-items:center}
+    .hero .text{flex:1}
+    .hero h2{margin:0 0 6px;font-size:20px}
+    .hero p{margin:0;font-size:13px;opacity:0.95}
+    .thumbs{display:flex;gap:10px}
+    .thumb{width:86px;height:70px;border-radius:10px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,0.08)}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .section-title{text-align:center;padding:8px 0}
+    .section-title .date{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .section-title h3{margin:0;font-size:20px}
+    .stats{display:flex;gap:12px;align-items:center;justify-content:center}
+    .stat{background:var(--card);padding:12px 18px;border-radius:999px;box-shadow:var(--shadow);min-width:120px;text-align:center;cursor:pointer}
+    .stat .num{font-size:20px;font-weight:700}
+    .stat .label{font-size:12px;color:var(--muted)}
+    .stat.active{background:linear-gradient(90deg,#e6f7f7,#f1fcfe);border:1px solid rgba(19,128,140,0.08)}
+    .list{background:var(--card);padding:18px;border-radius:14px;box-shadow:var(--shadow);min-height:320px}
+    .item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfeff);box-shadow:0 4px 12px rgba(16,54,63,0.04);margin-bottom:10px}
+    .item:last-child{margin-bottom:0}
+    .item .img{width:56px;height:56px;border-radius:10px;background:var(--glass);display:flex;align-items:center;justify-content:center;font-weight:600;color:#6b7280}
+    .item .meta{flex:1}
+    .item .meta .title{font-weight:600;margin-bottom:4px}
+    .item .meta .sub{font-size:13px;color:var(--muted)}
+    .badge{font-size:12px;padding:6px 10px;border-radius:999px}
+    .badge.expired{background:rgba(217,83,79,0.08);color:var(--danger)}
+    .badge.soon{background:rgba(255,171,0,0.08);color:#ff8c00}
+    .badge.fresh{background:rgba(15,81,50,0.08);color:var(--success)}
+    .check{width:36px;height:36px;border-radius:50%;border:2px solid #e6eef0;display:grid;place-items:center;color:var(--accent-2)}
+    .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:var(--shadow)}
+    .small-title{font-size:13px;color:var(--muted);margin-bottom:8px}
+    .recipe-grid{display:flex;flex-direction:column;gap:8px}
+    .recipe{display:flex;gap:10px;align-items:center}
+    .recipe .rimg{width:64px;height:48px;border-radius:8px;background:#f0f4f5;display:block;object-fit:cover}
+    .search{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border-radius:999px;box-shadow:var(--shadow);margin:12px 0}
+    .search input{border:0;outline:0;width:100%;font-size:14px;background:transparent}
+    .tabs{display:flex;gap:12px;padding:8px}
+    .tab{padding:8px 12px;border-radius:999px;cursor:pointer;color:var(--muted);background:transparent}
+    .tab.active{background:linear-gradient(90deg,#e6f7f7,#f1fcfe);color:var(--accent-2);font-weight:600;box-shadow:var(--shadow)}
+    .storage-list{background:linear-gradient(180deg,#eaf9f9,#ffffff);padding:14px;border-radius:14px}
+    .storage-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;background:var(--card);border-radius:10px;margin-bottom:10px;box-shadow:0 6px 14px rgba(16,54,63,0.03)}
+    .storage-item .left{display:flex;gap:12px;align-items:center}
+    .progress{width:44px;height:44px;border-radius:50%;background:linear-gradient(180deg,#fff,#fbfeff);display:grid;place-items:center;border:6px solid rgba(255,171,0,0.08)}
+    .storage-item .meta .sub{font-weight:700;color:#111}
+    .recipe-grid-page{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;padding:12px 0}
+    .recipe-card{background:var(--card);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform 0.2s}
+    .recipe-card:hover{transform:translateY(-4px)}
+    .recipe-card .img{width:100%;height:140px;object-fit:cover;display:block}
+    .recipe-card .info{padding:10px}
+    .recipe-card .title{font-weight:600;font-size:14px;margin-bottom:6px}
+    .recipe-card .time{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted);margin-bottom:8px}
+    .recipe-card .heart{cursor:pointer;font-size:18px}
+    .recipe-back{display:flex;align-items:center;gap:8px;background:none;border:0;color:var(--accent-2);cursor:pointer;padding:8px 0;font-size:14px;margin-bottom:12px}
+    .bottom-nav{position:fixed;left:0;right:0;bottom:18px;pointer-events:none;display:flex;justify-content:center;z-index:60}
+    .bottom-nav-inner{width:100%;max-width:var(--container);padding:0 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;pointer-events:auto}
+    .nav-group{display:flex;gap:0;align-items:center;flex:1;justify-content:space-around}
+    .nav-pill{flex:1;display:flex;align-items:center;justify-content:space-between;gap:0;background:#4FB7B3;padding:10px 14px;border-radius:14px;box-shadow:var(--shadow)}
+    .nav-btn{display:flex;flex-direction:column;align-items:center;gap:4px;background:transparent;border:0;padding:6px 8px;cursor:pointer;color:#fff;font-size:13px;flex:1}
+    .nav-btn .icon{font-size:18px;display:block}
+    .nav-btn.active{color:#fff;font-weight:600}
+    .fab{width:64px;height:64px;border-radius:50%;background:linear-gradient(90deg,#ffb84d,#ff8c42);display:grid;place-items:center;color:#fff;font-size:28px;margin-top:-28px;box-shadow:0 12px 30px rgba(255,140,66,0.18);border:6px solid #4FB7B3;cursor:pointer}
+    
+    /* Add Item Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+    }
+    
+    .modal {
+      background: var(--card);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow);
+    }
+    
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e6eef0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+    
+    .modal-close:hover {
+      background: #f0f4f5;
+    }
+    
+    .modal-body {
+      padding: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .form-input, .form-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e3e7ee;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    
+    .form-input:focus, .form-select:focus {
+      outline: 0;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(43,124,255,0.08);
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .form-row .form-group {
+      flex: 1;
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    
+    .btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      flex: 1;
+      transition: opacity 0.2s;
+    }
+    
+    .btn:hover {
+      opacity: 0.9;
+    }
+    
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .btn-secondary {
+      background: #f0f4f5;
+      color: var(--muted);
+    }
+    
+    .form-message {
+      margin-top: 12px;
+      font-size: 13px;
+      min-height: 18px;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+    
+    .form-message.error {
+      color: var(--danger);
+      background: rgba(217,83,79,0.08);
+    }
+    
+    .form-message.success {
+      color: var(--success);
+      background: rgba(15,81,50,0.08);
+    }
+    
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    
+    .empty-state {
+      text-align: center;
+      color: var(--muted);
+      padding: 60px 20px;
+    }
+    
+    .empty-state .icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    .empty-state p {
+      margin: 8px 0;
+      font-size: 14px;
+    }
+    
+    @media (max-width:1000px){
+      .wrap{padding:12px;flex-direction:column}
+      .sidebar{width:100%}
+    }
+    @media (max-width:700px){
+      .bottom-nav{bottom:12px}
+      .fab{width:56px;height:56px;margin-top:-24px;font-size:24px}
+      .nav-btn{font-size:12px}
+      .form-row {
+        flex-direction: column;
+        gap: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap" role="main" aria-label="ExpireMe Home">
+    <div class="main">
+      <header class="top" aria-hidden="false">
+        <div class="profile">
+          <div class="avatar" title="Profile" id="userAvatar">K</div>
+          <div>
+            <div class="greeting" id="userGreeting">Hi User</div>
+            <div style="font-size:12px;color:var(--muted)">Welcome back</div>
+          </div>
+        </div>
+        <div class="icons">
+          <button class="icon-btn" title="Notifications" id="btnBell">🔔</button>
+          <button class="icon-btn" title="Settings" id="btnLogout">⚙️</button>
+        </div>
+      </header>
+
+      <!-- HOME VIEW -->
+      <div id="view-home" aria-live="polite">
+        <section class="hero" aria-label="Food reminder">
+          <div class="text">
+            <h2 id="heroTitle">Manage Your Food Items</h2>
+            <p id="heroSubtitle">Add items to track their expiry dates</p>
+          </div>
+          <div class="thumbs" aria-hidden="true">
+            <div class="thumb"><img src="https://images.unsplash.com/photo-1516100882582-96c3a05fe590?w=800&q=60&auto=format&fit=crop" alt=""></div>
+            <div class="thumb"><img src="https://images.unsplash.com/photo-1505765052448-9b5a8f1d1f9b?w=800&q=60&auto=format&fit=crop" alt=""></div>
+            <div class="thumb"><img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?w=800&q=60&auto=format&fit=crop" alt=""></div>
+          </div>
+        </section>
+
+        <section class="section-title" aria-labelledby="title-check">
+          <div class="date" id="currentDate">Loading date...</div>
+          <h3 id="title-check">Check Your Food Stock!</h3>
+        </section>
+
+        <nav class="stats" role="tablist" aria-label="Stock categories">
+          <div class="stat active" data-type="expired" role="tab" aria-selected="true">
+            <div class="num" id="expiredCount">0</div>
+            <div class="label">Expired</div>
+          </div>
+          <div class="stat" data-type="soon" role="tab" aria-selected="false">
+            <div class="num" id="soonCount">0</div>
+            <div class="label">Expiring Soon</div>
+          </div>
+          <div class="stat" data-type="fresh" role="tab" aria-selected="false">
+            <div class="num" id="freshCount">0</div>
+            <div class="label">Fresh</div>
+          </div>
+        </nav>
+
+        <section class="list" id="list">
+          <div class="empty-state">
+            <div class="icon">📦</div>
+            <p>No items yet</p>
+            <p>Add your first item to get started!</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- STORAGE VIEW -->
+      <div id="view-storage" style="display:none">
+        <div style="text-align:center;margin-top:6px;color:var(--muted);font-size:13px" id="storageDate">Loading date...</div>
+        <h3 style="text-align:center;margin:6px 0 10px">Your Storage</h3>
+
+        <div class="search" role="search" aria-label="Search ingredients">
+          <span>🔍</span>
+          <input id="storage-search" placeholder="Search your items..." />
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="Storage tabs">
+          <div class="tab active" data-loc="fridge" role="tab">Fridge</div>
+          <div class="tab" data-loc="freezer" role="tab">Freezer</div>
+          <div class="tab" data-loc="pantry" role="tab">Pantry</div>
+        </div>
+
+        <div class="storage-list" id="storage-list">
+          <div class="empty-state">
+            <div class="icon">📦</div>
+            <p>No items in this storage</p>
+            <p>Add items to see them here</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECIPE VIEW -->
+      <div id="view-recipe" style="display:none">
+        <button class="recipe-back" id="recipe-back">← Back</button>
+        <h3 style="text-align:center;margin:0 0 12px">Recipes</h3>
+        <div class="recipe-grid-page" id="recipe-grid">
+          <div class="empty-state">
+            <div class="icon">📚</div>
+            <p>No recipes available</p>
+            <p>Recipes feature coming soon!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="sidebar" aria-label="Right column">
+      <div class="card">
+        <div class="small-title">Summary</div>
+        <div style="display:flex;gap:10px;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:22px;font-weight:700" id="summaryExpired">0</div>
+            <div style="font-size:12px;color:var(--muted)">Expired</div>
+          </div>
+          <div>
+            <div style="font-size:22px;font-weight:700" id="summarySoon">0</div>
+            <div style="font-size:12px;color:var(--muted)">Expiring Soon</div>
+          </div>
+          <div>
+            <div style="font-size:22px;font-weight:700" id="summaryFresh">0</div>
+            <div style="font-size:12px;color:var(--muted)">Fresh</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="small-title">Suggestions</div>
+        <div style="font-size:14px;margin-bottom:8px">Try these recipes with items that are expiring soon</div>
+        <div class="recipe-grid">
+          <div class="recipe"><img class="rimg" src="https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800&q=60&auto=format&fit=crop" alt=""> <div><div style="font-weight:600">Creamy Pancakes</div><div style="font-size:12px;color:var(--muted)">Milk · Eggs</div></div></div>
+          <div class="recipe"><img class="rimg" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=60&auto=format&fit=crop" alt=""> <div><div style="font-weight:600">Berry Smoothie</div><div style="font-size:12px;color:var(--muted)">Yogurt · Milk</div></div></div>
+        </div>
+      </div>
+
+      <div class="card" style="text-align:center">
+        <div class="small-title">Quick Actions</div>
+        <button style="background:var(--accent);color:#fff;border:0;padding:10px 14px;border-radius:10px;cursor:pointer" id="scanItemBtn">Scan Item</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ADD ITEM MODAL -->
+  <div class="modal-overlay" id="addItemModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Add New Item</h2>
+        <button class="modal-close" id="modalClose">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="addItemForm">
+          <div class="form-group">
+            <label class="form-label" for="itemName">Item Name</label>
+            <input type="text" class="form-input" id="itemName" placeholder="e.g. Milk, Eggs, Bread" required>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="itemQuantity">Quantity</label>
+              <input type="number" class="form-input" id="itemQuantity" min="1" value="1" required>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="itemUnit">Unit</label>
+              <select class="form-select" id="itemUnit" required>
+                <option value="pieces">Pieces</option>
+                <option value="grams">Grams</option>
+                <option value="kilograms">Kilograms</option>
+                <option value="milliliters">Milliliters</option>
+                <option value="liters">Liters</option>
+                <option value="ounces">Ounces</option>
+                <option value="pounds">Pounds</option>
+                <option value="cups">Cups</option>
+                <option value="tablespoons">Tablespoons</option>
+                <option value="teaspoons">Teaspoons</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="itemLocation">Storage Location</label>
+            <select class="form-select" id="itemLocation" required>
+              <option value="fridge">Fridge</option>
+              <option value="freezer">Freezer</option>
+              <option value="pantry">Pantry</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="itemExpiry">Expiry Date</label>
+            <input type="date" class="form-input" id="itemExpiry" required>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelAdd">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="saveItem">Add Item</button>
+          </div>
+          
+          <div class="form-message" id="formMessage"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAVIGATION -->
+  <div class="bottom-nav" role="navigation" aria-label="Main navigation">
+    <div class="bottom-nav-inner">
+      <div class="nav-pill">
+        <div class="nav-group left">
+          <button class="nav-btn active" id="nav-home" title="Home"><span class="icon">🏠</span><span class="text">Home</span></button>
+          <button class="nav-btn" id="nav-storage" title="Storage"><span class="icon">📦</span><span class="text">Storage</span></button>
+        </div>
+
+        <button class="fab" id="nav-add" aria-label="Add item">+</button>
+
+        <div class="nav-group right">
+          <button class="nav-btn" id="nav-recipe" title="Recipe"><span class="icon">📚</span><span class="text">Recipe</span></button>
+          <button class="nav-btn" id="nav-reward" title="Reward"><span class="icon">🎁</span><span class="text">Reward</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+  // Import Firebase modules
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import { 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    query, 
+    where, 
+    orderBy, 
+    onSnapshot, 
+    serverTimestamp,
+    deleteDoc,
+    doc
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBzKv3EIbgpJgo-Is81mBUxvFvt1RctKhk",
+    authDomain: "expireme-38849.firebaseapp.com",
+    projectId: "expireme-38849",
+    storageBucket: "expireme-38849.firebasestorage.app",
+    messagingSenderId: "405593756802",
+    appId: "1:405593756802:web:ab73386c1c1816a492d09b",
+    measurementId: "G-RKTKJHYQZ2"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // DOM Elements
+  const listEl = document.getElementById('list');
+  const storageListEl = document.getElementById('storage-list');
+  const recipeGridEl = document.getElementById('recipe-grid');
+  const stats = document.querySelectorAll('.stat');
+  const tabEls = document.querySelectorAll('.tab');
+  const storageSearch = document.getElementById('storage-search');
+  const navButtons = document.querySelectorAll('.nav-btn');
+  const btnBell = document.getElementById('btnBell');
+  const btnLogout = document.getElementById('btnLogout');
+  const userAvatar = document.getElementById('userAvatar');
+  const userGreeting = document.getElementById('userGreeting');
+  const currentDateEl = document.getElementById('currentDate');
+  const storageDateEl = document.getElementById('storageDate');
+  const expiredCountEl = document.getElementById('expiredCount');
+  const soonCountEl = document.getElementById('soonCount');
+  const freshCountEl = document.getElementById('freshCount');
+  const summaryExpiredEl = document.getElementById('summaryExpired');
+  const summarySoonEl = document.getElementById('summarySoon');
+  const summaryFreshEl = document.getElementById('summaryFresh');
+  const heroTitle = document.getElementById('heroTitle');
+  const heroSubtitle = document.getElementById('heroSubtitle');
+  const scanItemBtn = document.getElementById('scanItemBtn');
+  
+  // Add Item Modal Elements
+  const addItemModal = document.getElementById('addItemModal');
+  const navAdd = document.getElementById('nav-add');
+  const modalClose = document.getElementById('modalClose');
+  const cancelAdd = document.getElementById('cancelAdd');
+  const addItemForm = document.getElementById('addItemForm');
+  const formMessage = document.getElementById('formMessage');
+  const itemExpiry = document.getElementById('itemExpiry');
+  const saveItemBtn = document.getElementById('saveItem');
+
+  // State
+  let storageActiveLoc = 'fridge';
+  let userItems = [];
+  let currentUser = null;
+  let unsubscribeItems = null;
+
+  // Set current date
+  function updateCurrentDate() {
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateString = now.toLocaleDateString('en-US', options);
+    currentDateEl.textContent = dateString;
+    storageDateEl.textContent = dateString;
+  }
+
+  // Set minimum date for expiry to today
+  const today = new Date().toISOString().split('T')[0];
+  itemExpiry.min = today;
+
+  // Auth Check
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = 'login.html';
+    } else {
+      currentUser = user;
+      console.log('User logged in:', user.uid, user.displayName || user.email);
+      
+      // Update user interface
+      updateUserInterface(user);
+      
+      // Load user items
+      loadUserItems();
+    }
+  });
+
+  // Update user interface with user data
+  function updateUserInterface(user) {
+    if (user.displayName) {
+      userGreeting.textContent = `Hi ${user.displayName}`;
+      userAvatar.textContent = user.displayName.charAt(0).toUpperCase();
+    } else if (user.email) {
+      const userName = user.email.split('@')[0];
+      userGreeting.textContent = `Hi ${userName}`;
+      userAvatar.textContent = userName.charAt(0).toUpperCase();
+    }
+  }
+
+  // Load user items from Firestore with real-time updates
+  function loadUserItems() {
+    try {
+      console.log('Loading items for user:', currentUser.uid);
+      const itemsRef = collection(db, 'items');
+      const q = query(
+        itemsRef, 
+        where('userId', '==', currentUser.uid),
+        orderBy('expiryDate', 'asc')
+      );
+      
+      // Set up real-time listener
+      unsubscribeItems = onSnapshot(q, 
+        (snapshot) => {
+          console.log('Snapshot received, docs count:', snapshot.size);
+          userItems = [];
+          
+          if (snapshot.empty) {
+            console.log('No items found for user');
+            showEmptyState();
+            return;
+          }
+          
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            console.log('Processing item:', doc.id, data);
+            
+            // Convert Firestore timestamp to Date
+            let expiryDate;
+            if (data.expiryDate && data.expiryDate.toDate) {
+              expiryDate = data.expiryDate.toDate();
+            } else if (data.expiryDate instanceof Date) {
+              expiryDate = data.expiryDate;
+            } else {
+              console.warn('Invalid expiry date format:', data.expiryDate);
+              return;
+            }
+            
+            // Calculate days until expiry
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Normalize to start of day
+            
+            const timeDiff = expiryDate.getTime() - today.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            
+            // Determine status based on days until expiry
+            let status = 'fresh';
+            if (daysDiff < 0) status = 'expired';
+            else if (daysDiff <= 7) status = 'soon';
+            
+            const item = {
+              id: doc.id,
+              name: data.name || 'Unknown',
+              quantity: data.quantity || 1,
+              unit: data.unit || 'pieces',
+              location: data.location || 'pantry',
+              expiryDate: expiryDate,
+              days: daysDiff,
+              status: status
+            };
+            
+            userItems.push(item);
+          });
+          
+          console.log('Loaded items:', userItems);
+          
+          // Update UI with real data
+          updateStats();
+          renderHome('expired');
+          renderStorage();
+          updateHeroMessage();
+          
+        }, 
+        (error) => {
+          console.error('Error in onSnapshot:', error);
+          console.error('Error details:', error.code, error.message);
+          showEmptyState();
+          
+          // Show error message to user
+          listEl.innerHTML = `
+            <div class="empty-state">
+              <div class="icon">❌</div>
+              <p>Error loading items</p>
+              <p>Please check console for details</p>
+              <p style="font-size:12px">${error.message}</p>
+            </div>
+          `;
+        }
+      );
+    } catch (error) {
+      console.error('Error loading items:', error);
+      showEmptyState();
+    }
+  }
+
+  // Update hero message based on items
+  function updateHeroMessage() {
+    if (userItems.length === 0) {
+      heroTitle.textContent = "Welcome to ExpireMe!";
+      heroSubtitle.textContent = "Add your first item to start tracking expiry dates";
+    } else {
+      const expiringSoon = userItems.filter(item => item.status === 'soon').length;
+      const expired = userItems.filter(item => item.status === 'expired').length;
+      
+      if (expired > 0) {
+        heroTitle.textContent = `You have ${expired} expired item${expired > 1 ? 's' : ''}!`;
+        heroSubtitle.textContent = "Check your expired items and consider disposing them";
+      } else if (expiringSoon > 0) {
+        heroTitle.textContent = `You have ${expiringSoon} item${expiringSoon > 1 ? 's' : ''} expiring soon!`;
+        heroSubtitle.textContent = "Check suggestions for recipes to use them";
+      } else {
+        heroTitle.textContent = "All your items are fresh!";
+        heroSubtitle.textContent = "Keep up the good food management";
+      }
+    }
+  }
+
+  // Show empty state
+  function showEmptyState() {
+    listEl.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📦</div>
+        <p>No items yet</p>
+        <p>Add your first item to get started!</p>
+      </div>
+    `;
+    
+    storageListEl.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📦</div>
+        <p>No items in this storage</p>
+        <p>Add items to see them here</p>
+      </div>
+    `;
+    
+    // Reset counts
+    expiredCountEl.textContent = '0';
+    soonCountEl.textContent = '0';
+    freshCountEl.textContent = '0';
+    summaryExpiredEl.textContent = '0';
+    summarySoonEl.textContent = '0';
+    summaryFreshEl.textContent = '0';
+  }
+
+  // Update stats based on user items
+  function updateStats() {
+    const expiredCount = userItems.filter(item => item.status === 'expired').length;
+    const soonCount = userItems.filter(item => item.status === 'soon').length;
+    const freshCount = userItems.filter(item => item.status === 'fresh').length;
+    
+    console.log('Updating stats - Expired:', expiredCount, 'Soon:', soonCount, 'Fresh:', freshCount);
+    
+    // Update stats in the navigation
+    expiredCountEl.textContent = expiredCount;
+    soonCountEl.textContent = soonCount;
+    freshCountEl.textContent = freshCount;
+    
+    // Update summary in sidebar
+    summaryExpiredEl.textContent = expiredCount;
+    summarySoonEl.textContent = soonCount;
+    summaryFreshEl.textContent = freshCount;
+  }
+
+  // Render Functions
+  function renderHome(filter='expired') {
+    console.log('Rendering home with filter:', filter, 'Items:', userItems);
+    listEl.innerHTML = '';
+    const filtered = userItems.filter(i => filter === 'all' ? true : i.status === filter);
+    
+    if (!filtered.length) {
+      const message = filter === 'expired' ? 'expired items' : 
+                     filter === 'soon' ? 'items expiring soon' : 
+                     'fresh items';
+      listEl.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">✅</div>
+          <p>No ${message}</p>
+          <p>All your items are ${filter === 'expired' ? 'fresh or expiring soon' : 
+                                filter === 'soon' ? 'fresh or expired' : 
+                                'expired or expiring soon'}!</p>
+        </div>
+      `;
+      return;
+    }
+    
+    filtered.forEach(it => {
+      const badgeClass = it.status === 'expired' ? 'expired' : it.status === 'soon' ? 'soon' : 'fresh';
+      const badgeText = it.status === 'expired' ? 'Expired' : it.status === 'soon' ? 'Expiring Soon' : 'Fresh';
+      const daysText = it.days < 0 ? `${Math.abs(it.days)} days ago` : 
+                      it.days === 0 ? 'Today' : 
+                      `${it.days} days`;
+      
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.innerHTML = `
+        <div class="img">${it.name.charAt(0).toUpperCase()}</div>
+        <div class="meta">
+          <div class="title">${it.name}</div>
+          <div class="sub">${it.quantity} ${it.unit} • ${it.location} • ${daysText}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+          <div class="badge ${badgeClass}">${badgeText}</div>
+          <div class="check" data-id="${it.id}">✓</div>
+        </div>
+      `;
+      listEl.appendChild(item);
+      
+      // Add event listener to check button
+      const checkBtn = item.querySelector('.check');
+      checkBtn.addEventListener('click', () => {
+        handleItemCheck(it.id);
+      });
+    });
+  }
+
+  function renderStorage(location = storageActiveLoc, searchQuery = '') {
+    console.log('Rendering storage:', location, 'Search:', searchQuery, 'Items:', userItems);
+    storageListEl.innerHTML = '';
+    const filtered = userItems.filter(i => 
+      i.location === location && 
+      i.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    
+    if (!filtered.length) {
+      const locationName = location === 'fridge' ? 'fridge' : 
+                         location === 'freezer' ? 'freezer' : 'pantry';
+      storageListEl.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">📦</div>
+          <p>No items in your ${locationName}</p>
+          <p>Add items to see them here</p>
+        </div>
+      `;
+      return;
+    }
+    
+    filtered.forEach(it => {
+      const daysText = it.days <= 0 ? 
+        `Expired ${Math.abs(it.days)} day${Math.abs(it.days) === 1 ? '' : 's'} ago` : 
+        `Expires in ${it.days} day${it.days === 1 ? '' : 's'}`;
+        
+      const node = document.createElement('div');
+      node.className = 'storage-item';
+      node.innerHTML = `
+        <div class="left">
+          <div class="progress">${it.name.charAt(0).toUpperCase()}</div>
+          <div class="meta">
+            <div style="font-weight:600">${it.name}</div>
+            <div class="sub">${daysText}</div>
+          </div>
+        </div>
+        <div class="check" data-id="${it.id}">✓</div>
+      `;
+      storageListEl.appendChild(node);
+      
+      // Add event listener to check button
+      const checkBtn = node.querySelector('.check');
+      checkBtn.addEventListener('click', () => {
+        handleItemCheck(it.id);
+      });
+    });
+  }
+
+  function renderRecipes() {
+    recipeGridEl.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📚</div>
+        <p>Recipe feature coming soon!</p>
+        <p>We're working on personalized recipe suggestions based on your items.</p>
+      </div>
+    `;
+  }
+
+  // Handle item check (mark as used/remove)
+  async function handleItemCheck(itemId) {
+    if (confirm('Mark this item as used/consumed? This will remove it from your list.')) {
+      try {
+        await deleteDoc(doc(db, 'items', itemId));
+        console.log('Item removed:', itemId);
+      } catch (error) {
+        console.error('Error removing item:', error);
+        alert('Error removing item. Please try again.');
+      }
+    }
+  }
+
+  function showView(view) {
+    document.getElementById('view-home').style.display = view === 'home' ? '' : 'none';
+    document.getElementById('view-storage').style.display = view === 'storage' ? '' : 'none';
+    document.getElementById('view-recipe').style.display = view === 'recipe' ? '' : 'none';
+    navButtons.forEach(b => b.classList.toggle('active', b.id === `nav-${view}`));
+    if (view === 'storage') {
+      storageSearch.focus();
+      renderStorage(); // Refresh storage view when switching to it
+    }
+  }
+
+  // Add Item Modal Functions
+  function openAddItemModal() {
+    addItemModal.classList.add('active');
+    document.getElementById('itemName').focus();
+  }
+
+  function closeAddItemModal() {
+    addItemModal.classList.remove('active');
+    addItemForm.reset();
+    formMessage.textContent = '';
+    formMessage.className = 'form-message';
+    saveItemBtn.disabled = false;
+    saveItemBtn.textContent = 'Add Item';
+  }
+
+  async function saveItem(itemData) {
+    try {
+      console.log('Saving item:', itemData);
+      const itemsRef = collection(db, 'items');
+      const docRef = await addDoc(itemsRef, {
+        ...itemData,
+        userId: currentUser.uid,
+        createdAt: serverTimestamp()
+      });
+      
+      console.log('Item added with ID:', docRef.id);
+      
+      formMessage.textContent = 'Item added successfully!';
+      formMessage.className = 'form-message success';
+      
+      setTimeout(() => {
+        closeAddItemModal();
+      }, 1500);
+      
+      return true;
+    } catch (error) {
+      console.error('Error adding item:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      
+      let errorMessage = 'Error adding item. Please try again.';
+      
+      if (error.code === 'permission-denied') {
+        errorMessage = 'Permission denied. Please check Firestore security rules.';
+      } else if (error.code === 'unavailable') {
+        errorMessage = 'Network error. Please check your connection.';
+      }
+      
+      formMessage.textContent = errorMessage;
+      formMessage.className = 'form-message error';
+      
+      saveItemBtn.disabled = false;
+      saveItemBtn.textContent = 'Add Item';
+      
+      return false;
+    }
+  }
+
+  // Initialize the application
+  function initApp() {
+    updateCurrentDate();
+    renderRecipes();
+    
+    // Add Item Modal Event Listeners
+    navAdd.addEventListener('click', openAddItemModal);
+    modalClose.addEventListener('click', closeAddItemModal);
+    cancelAdd.addEventListener('click', closeAddItemModal);
+
+    addItemForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const itemName = document.getElementById('itemName').value.trim();
+      const itemQuantity = parseInt(document.getElementById('itemQuantity').value);
+      const itemUnit = document.getElementById('itemUnit').value;
+      const itemLocation = document.getElementById('itemLocation').value;
+      const itemExpiry = document.getElementById('itemExpiry').value;
+      
+      if (!itemName) {
+        formMessage.textContent = 'Please enter an item name.';
+        formMessage.className = 'form-message error';
+        return;
+      }
+      
+      if (itemQuantity <= 0) {
+        formMessage.textContent = 'Please enter a valid quantity.';
+        formMessage.className = 'form-message error';
+        return;
+      }
+      
+      if (!itemExpiry) {
+        formMessage.textContent = 'Please select an expiry date.';
+        formMessage.className = 'form-message error';
+        return;
+      }
+      
+      // Show loading state
+      saveItemBtn.disabled = true;
+      saveItemBtn.textContent = 'Adding...';
+      formMessage.textContent = '';
+      formMessage.className = 'form-message';
+      
+      const itemData = {
+        name: itemName,
+        quantity: itemQuantity,
+        unit: itemUnit,
+        location: itemLocation,
+        expiryDate: new Date(itemExpiry)
+      };
+      
+      await saveItem(itemData);
+    });
+
+    // Close modal when clicking outside
+    addItemModal.addEventListener('click', (e) => {
+      if (e.target === addItemModal) {
+        closeAddItemModal();
+      }
+    });
+
+    // Existing Event Listeners
+    stats.forEach(s => {
+      s.addEventListener('click', () => {
+        stats.forEach(x => {
+          x.classList.remove('active');
+          x.setAttribute('aria-selected', 'false');
+        });
+        s.classList.add('active');
+        s.setAttribute('aria-selected', 'true');
+        renderHome(s.getAttribute('data-type'));
+      });
+    });
+
+    tabEls.forEach(t => {
+      t.addEventListener('click', () => {
+        tabEls.forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+        storageActiveLoc = t.getAttribute('data-loc');
+        renderStorage(storageActiveLoc, storageSearch.value);
+      });
+    });
+
+    storageSearch.addEventListener('input', () => {
+      renderStorage(storageActiveLoc, storageSearch.value);
+    });
+
+    document.getElementById('recipe-back').addEventListener('click', () => showView('home'));
+
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.id === 'nav-home') showView('home');
+        else if (btn.id === 'nav-storage') showView('storage');
+        else if (btn.id === 'nav-recipe') showView('recipe');
+        else if (btn.id === 'nav-reward') alert('Rewards feature coming soon!');
+      });
+    });
+
+    btnBell.addEventListener('click', () => {
+      const expiredCount = userItems.filter(item => item.status === 'expired').length;
+      if (expiredCount > 0) {
+        alert(`You have ${expiredCount} expired item${expiredCount > 1 ? 's' : ''}. Check your expired items list.`);
+      } else {
+        alert('No notifications. All your items are fresh!');
+      }
+    });
+
+    btnLogout.addEventListener('click', () => {
+      // Unsubscribe from real-time updates before logging out
+      if (unsubscribeItems) {
+        unsubscribeItems();
+      }
+      signOut(auth).then(() => {
+        window.location.href = 'login.html';
+      });
+    });
+
+    scanItemBtn.addEventListener('click', () => {
+      alert('Barcode scanning feature coming soon! For now, please manually add your items.');
+    });
+  }
+
+  // Initialize the app when DOM is loaded
+  document.addEventListener('DOMContentLoaded', initApp);
+</script>
+</body>
+</html>

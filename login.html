@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ExpireMe — Login</title>
+  <style>
+    :root{--bg:#f4f7fb;--card:#fff;--accent:#2b7cff;--muted:#6b7280;--danger:#b91c1c;--success:#0f5132}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#eef5ff 0%,var(--bg) 100%);min-height:100vh;display:grid;place-items:center;color:#21303b}
+    .card{width:320px;background:var(--card);padding:28px;border-radius:12px;box-shadow:0 6px 18px rgba(23,43,77,0.08)}
+    h1{margin:0 0 12px;font-size:20px;font-weight:600}
+    p.lead{margin:0 0 18px;color:var(--muted);font-size:13px}
+    label{display:block;font-size:13px;margin-bottom:6px;font-weight:500}
+    input[type="email"],input[type="password"],input[type="text"]{width:100%;padding:10px 12px;border:1px solid #e3e7ee;border-radius:8px;font-size:14px;box-sizing:border-box}
+    input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(43,124,255,0.08)}
+    .row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px}
+    .checkbox{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;cursor:pointer}
+    button[type="submit"]{width:100%;margin-top:14px;padding:10px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;transition:opacity 0.2s}
+    button[type="submit"]:hover{opacity:0.9}
+    button[type="submit"]:disabled{opacity:0.5;cursor:not-allowed}
+    .msg{margin-top:10px;font-size:13px;color:var(--danger);min-height:18px}
+    .msg.success{color:var(--success);background:#d1e7dd;padding:8px;border-radius:6px}
+    .small{font-size:12px;color:var(--muted);text-align:center;margin-top:12px}
+    .small a{color:var(--accent);text-decoration:none;cursor:pointer}
+    .small a:hover{text-decoration:underline}
+    .pw-toggle{background:none;border:0;color:var(--accent);cursor:pointer;font-size:12px;padding:0}
+    .pw-toggle:hover{text-decoration:underline}
+    .back-btn{background:none;border:0;color:var(--accent);cursor:pointer;font-size:13px;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:4px}
+    .back-btn:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+  <!-- LOGIN VIEW -->
+  <div id="view-login">
+    <main class="card" role="main" aria-labelledby="login-title">
+      <h1 id="login-title">Sign in to your account</h1>
+      <p class="lead">Enter your email and password to continue.</p>
+
+      <form id="loginForm" novalidate>
+        <div>
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+        </div>
+
+        <div style="margin-top:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <label for="password">Password</label>
+            <button type="button" class="pw-toggle" id="togglePw">Show</button>
+          </div>
+          <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required />
+        </div>
+
+        <div class="row">
+          <label class="checkbox"><input type="checkbox" id="remember" name="remember" /> Remember me</label>
+          <a href="#" style="color:var(--accent);font-size:13px">Forgot?</a>
+        </div>
+
+        <button type="submit" id="loginBtn">Sign In</button>
+        <div class="msg" id="loginMsg" role="status" aria-live="polite"></div>
+      </form>
+
+      <div class="small">No account? <a id="goSignup">Create one</a></div>
+    </main>
+  </div>
+
+  <!-- SIGNUP VIEW -->
+  <div id="view-signup" style="display:none">
+    <main class="card" role="main" aria-labelledby="signup-title">
+      <button class="back-btn" id="backToLogin" aria-label="Back to login">← Back</button>
+      <h1 id="signup-title">Create your account</h1>
+      <p class="lead">Sign up to start managing your food expiry dates.</p>
+
+      <form id="signupForm" novalidate>
+        <div>
+          <label for="fullname">Full Name</label>
+          <input id="fullname" name="fullname" type="text" autocomplete="name" placeholder="John Doe" required />
+        </div>
+
+        <div style="margin-top:12px">
+          <label for="signup-email">Email</label>
+          <input id="signup-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+        </div>
+
+        <div style="margin-top:12px">
+          <label for="signup-password">Password</label>
+          <input id="signup-password" name="password" type="password" autocomplete="new-password" placeholder="••••••••" required />
+        </div>
+
+        <div style="margin-top:12px">
+          <label for="confirm-password">Confirm Password</label>
+          <input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" placeholder="••••••••" required />
+        </div>
+
+        <label class="checkbox" style="margin-top:12px"><input type="checkbox" id="terms" name="terms" required /> I agree to the Terms & Conditions</label>
+
+        <button type="submit" id="signupBtn">Create Account</button>
+        <div class="msg" id="signupMsg" role="status" aria-live="polite"></div>
+      </form>
+
+      <div class="small">Already have an account? <a id="goLogin">Sign in</a></div>
+    </main>
+  </div>
+
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBzKv3EIbgpJgo-Is81mBUxvFvt1RctKhk",
+      authDomain: "expireme-38849.firebaseapp.com",
+      projectId: "expireme-38849",
+      storageBucket: "expireme-38849.firebasestorage.app",
+      messagingSenderId: "405593756802",
+      appId: "1:405593756802:web:ab73386c1c1816a492d09b",
+      measurementId: "G-RKTKJHYQZ2"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // DOM elements
+    const viewLogin = document.getElementById('view-login');
+    const viewSignup = document.getElementById('view-signup');
+    const goSignup = document.getElementById('goSignup');
+    const goLogin = document.getElementById('goLogin');
+    const backToLogin = document.getElementById('backToLogin');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const loginMsg = document.getElementById('loginMsg');
+    const signupMsg = document.getElementById('signupMsg');
+    const togglePw = document.getElementById('togglePw');
+    const pwInput = document.getElementById('password');
+
+    // View switching
+    function showLogin() {
+      viewLogin.style.display = '';
+      viewSignup.style.display = 'none';
+      loginMsg.textContent = '';
+      loginMsg.className = 'msg';
+    }
+
+    function showSignup() {
+      viewLogin.style.display = 'none';
+      viewSignup.style.display = '';
+      signupMsg.textContent = '';
+      signupMsg.className = 'msg';
+    }
+
+    // Event listeners for view switching
+    goSignup.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSignup();
+    });
+
+    goLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      showLogin();
+    });
+
+    backToLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      showLogin();
+    });
+
+    // Password toggle
+    togglePw.addEventListener('click', (e) => {
+      e.preventDefault();
+      const isHidden = pwInput.type === 'password';
+      pwInput.type = isHidden ? 'text' : 'password';
+      togglePw.textContent = isHidden ? 'Hide' : 'Show';
+    });
+
+    // Get error message from Firebase error code
+    function getErrorMessage(code) {
+      const errors = {
+        'auth/email-already-in-use': 'This email is already registered.',
+        'auth/invalid-email': 'Invalid email address.',
+        'auth/user-disabled': 'This account has been disabled.',
+        'auth/user-not-found': 'No account found with this email.',
+        'auth/wrong-password': 'Incorrect password.',
+        'auth/weak-password': 'Password is too weak.',
+        'auth/operation-not-allowed': 'Email/password sign-up is not enabled.',
+        'auth/network-request-failed': 'Network error. Please check your connection.'
+      };
+      return errors[code] || code;
+    }
+
+    // Login handler
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginMsg.textContent = '';
+      loginMsg.className = 'msg';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const loginBtn = document.getElementById('loginBtn');
+
+      if (!email || !password) {
+        loginMsg.textContent = 'Please fill in all fields.';
+        return;
+      }
+
+      loginBtn.disabled = true;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        loginMsg.className = 'msg success';
+        loginMsg.textContent = 'Signed in successfully. Redirecting...';
+        setTimeout(() => { window.location.href = 'homescreen.html'; }, 1000);
+      } catch (error) {
+        loginMsg.textContent = 'Login failed. ' + getErrorMessage(error.code);
+        loginBtn.disabled = false;
+      }
+    });
+
+    // Signup handler
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      signupMsg.textContent = '';
+      signupMsg.className = 'msg';
+
+      const fullname = document.getElementById('fullname').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const terms = document.getElementById('terms').checked;
+      const signupBtn = document.getElementById('signupBtn');
+
+      if (!fullname || !email || !password || !confirmPassword) {
+        signupMsg.textContent = 'Please fill in all fields.';
+        return;
+      }
+      if (password.length < 6) {
+        signupMsg.textContent = 'Password must be at least 6 characters.';
+        return;
+      }
+      if (password !== confirmPassword) {
+        signupMsg.textContent = 'Passwords do not match.';
+        return;
+      }
+      if (!terms) {
+        signupMsg.textContent = 'Please accept the Terms & Conditions.';
+        return;
+      }
+
+      signupBtn.disabled = true;
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName: fullname });
+        
+        signupMsg.className = 'msg success';
+        signupMsg.textContent = 'Account created successfully. Redirecting...';
+        setTimeout(() => { window.location.href = 'homescreen.html'; }, 1000);
+      } catch (error) {
+        signupMsg.textContent = 'Signup failed. ' + getErrorMessage(error.code);
+        signupBtn.disabled = false;
+      }
+    });
+
+    // Auto-redirect if already logged in
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.location.href = 'homescreen.html';
+      }
+    });
+  </script>
+</body>
+</html>
