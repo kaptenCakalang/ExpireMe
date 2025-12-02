@@ -10,6 +10,7 @@
       --danger:#d9534f; --success:#0f5132; --glass: rgba(19,128,140,0.06);
       --radius:12px; --container:1100px;
       --shadow:0 8px 20px rgba(23,43,77,0.08);
+      --bronze: #cd7f32; --silver: #c0c0c0; --gold: #ffd700;
     }
     html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#f0f7f8 0%,var(--bg)100%);color:#21303b}
     .wrap{max-width:var(--container);margin:28px auto;padding:20px;display:flex;gap:20px;align-items:flex-start}
@@ -474,9 +475,681 @@
       color: var(--danger);
     }
     
+    /* REWARDS/ACHIEVEMENTS STYLES - IMPROVED */
+    .achievements-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    
+    .achievement-category {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+    
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f0f4f5;
+    }
+    
+    .category-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+    }
+    
+    .category-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+      color: #21303b;
+    }
+    
+    .category-description {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 4px 0 0 0;
+    }
+    
+    .achievement-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    
+    .achievement-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(23,43,77,0.12);
+    }
+    
+    .achievement-card.locked {
+      opacity: 0.7;
+      background: linear-gradient(135deg, #f8fafb, #ffffff);
+    }
+    
+    .achievement-card.unlocked {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, #ffffff, #f8fdfe);
+    }
+    
+    .achievement-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    
+    .achievement-bronze {
+      background: linear-gradient(135deg, var(--bronze), #e6b85c);
+      color: white;
+    }
+    
+    .achievement-silver {
+      background: linear-gradient(135deg, var(--silver), #e0e0e0);
+      color: white;
+    }
+    
+    .achievement-gold {
+      background: linear-gradient(135deg, var(--gold), #ffed4e);
+      color: white;
+    }
+    
+    .achievement-info {
+      flex: 1;
+    }
+    
+    .achievement-name {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 6px;
+      color: #21303b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .achievement-desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    
+    .achievement-requirements {
+      font-size: 12px;
+      color: var(--muted);
+      background: #f8fafb;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border-left: 3px solid var(--accent);
+    }
+    
+    .achievement-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    
+    .progress-bar {
+      flex: 1;
+      height: 8px;
+      background: #e6eef0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+    
+    .progress-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      min-width: 70px;
+      text-align: right;
+    }
+    
+    .achievement-status {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-left: auto;
+    }
+    
+    .status-unlocked {
+      background: rgba(15,81,50,0.1);
+      color: var(--success);
+    }
+    
+    .status-locked {
+      background: rgba(108,117,125,0.1);
+      color: var(--muted);
+    }
+    
+    .achievement-xp {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: linear-gradient(135deg, #ffb84d, #ff8c42);
+      color: white;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .unlocked-date {
+      font-size: 11px;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: 4px;
+    }
+    
+    .rewards-header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, #0fa3a7, #137b7c);
+      border-radius: 14px;
+      color: white;
+      box-shadow: var(--shadow);
+    }
+    
+    .rewards-header h2 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+      color: white;
+    }
+    
+    .rewards-header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 15px;
+    }
+    
+    .rewards-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-4px);
+    }
+    
+    .stat-icon {
+      font-size: 24px;
+      margin-bottom: 12px;
+      opacity: 0.8;
+    }
+    
+    .stat-number {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #21303b;
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    
+    .level-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: linear-gradient(135deg, #eaf9f9, #ffffff);
+      padding: 20px;
+      border-radius: 14px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+    }
+    
+    .level-display {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffb84d, #ff8c42);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 800;
+      color: white;
+      flex-shrink: 0;
+    }
+    
+    .level-details {
+      flex: 1;
+    }
+    
+    .level-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      color: #21303b;
+    }
+    
+    .level-progress {
+      margin: 12px 0;
+    }
+    
+    .level-progress-bar {
+      height: 8px;
+      background: #e6eef0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    
+    .level-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ffb84d, #ff8c42);
+      border-radius: 999px;
+    }
+    
+    .level-next {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+    
+    .achievement-new {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: var(--danger);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 999px;
+      animation: pulse 2s infinite;
+      z-index: 2;
+    }
+    
+    .tier-indicator {
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      border: 2px solid white;
+    }
+    
+    .tier-bronze {
+      background: var(--bronze);
+      color: white;
+    }
+    
+    .tier-silver {
+      background: var(--silver);
+      color: white;
+    }
+    
+    .tier-gold {
+      background: var(--gold);
+      color: white;
+    }
+    
+    .how-to-unlock {
+      margin-top: 24px;
+      padding: 20px;
+      background: linear-gradient(135deg, #f8fdfe, #ffffff);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+    
+    .how-to-unlock h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 0 16px 0;
+      color: #21303b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .tips-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .tip-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: white;
+      border-radius: 8px;
+      border-left: 4px solid var(--accent);
+    }
+    
+    .tip-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    
+    .tip-content {
+      flex: 1;
+    }
+    
+    .tip-title {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: #21303b;
+    }
+    
+    .tip-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .notification-toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--card);
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+      transform: translateX(120%);
+      transition: transform 0.3s ease;
+      max-width: 350px;
+      border-left: 4px solid var(--accent);
+    }
+    
+    .notification-toast.show {
+      transform: translateX(0);
+    }
+    
+    .notification-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+      flex-shrink: 0;
+    }
+    
+    /* Notification Page Styles */
+    .notification-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    
+    .notification-header h2 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      color: #21303b;
+    }
+    
+    .notification-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    
+    .notification-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border-left: 4px solid transparent;
+      transition: transform 0.2s;
+    }
+    
+    .notification-card:hover {
+      transform: translateY(-2px);
+    }
+    
+    .notification-card.unread {
+      border-left-color: var(--accent);
+      background: linear-gradient(135deg, #f8fdfe, #ffffff);
+    }
+    
+    .notification-card.expired {
+      border-left-color: var(--danger);
+    }
+    
+    .notification-card.soon {
+      border-left-color: #ff8c00;
+    }
+    
+    .notification-card.recipe {
+      border-left-color: var(--success);
+    }
+    
+    .notification-card.achievement {
+      border-left-color: #ffb84d;
+    }
+    
+    .notification-icon-small {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    
+    .notification-icon-expired {
+      background: rgba(217,83,79,0.1);
+      color: var(--danger);
+    }
+    
+    .notification-icon-soon {
+      background: rgba(255,171,0,0.1);
+      color: #ff8c00;
+    }
+    
+    .notification-icon-recipe {
+      background: rgba(15,81,50,0.1);
+      color: var(--success);
+    }
+    
+    .notification-icon-achievement {
+      background: rgba(255,184,77,0.1);
+      color: #ff8c00;
+    }
+    
+    .notification-icon-info {
+      background: rgba(19,128,140,0.1);
+      color: var(--accent);
+    }
+    
+    .notification-content {
+      flex: 1;
+    }
+    
+    .notification-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 15px;
+      color: #21303b;
+    }
+    
+    .notification-message {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    
+    .notification-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    
+    .notification-time {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+    
+    .notification-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .notification-action-btn {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .notification-action-btn.view {
+      background: rgba(19,128,140,0.1);
+      color: var(--accent);
+    }
+    
+    .notification-action-btn.view:hover {
+      background: rgba(19,128,140,0.2);
+    }
+    
+    .notification-action-btn.dismiss {
+      background: rgba(108,117,125,0.1);
+      color: var(--muted);
+    }
+    
+    .notification-action-btn.dismiss:hover {
+      background: rgba(108,117,125,0.2);
+    }
+    
+    .notification-filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    
+    .notification-filter {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #f0f4f5;
+      color: var(--muted);
+      border: none;
+      transition: all 0.2s;
+    }
+    
+    .notification-filter.active {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .notification-filter:hover:not(.active) {
+      background: #e6eef0;
+    }
+    
+    .notification-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    
+    .notification-empty .icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
     @media (max-width:1000px){
       .wrap{padding:12px;flex-direction:column}
       .sidebar{width:100%}
+      .rewards-stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
     @media (max-width:700px){
       .bottom-nav{bottom:12px}
@@ -488,6 +1161,45 @@
       }
       .recipe-detail-title {
         font-size: 20px;
+      }
+      .rewards-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+      .stat-card {
+        padding: 16px;
+      }
+      .stat-number {
+        font-size: 24px;
+      }
+      .level-info {
+        flex-direction: column;
+        text-align: center;
+      }
+      .achievement-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+      }
+      .achievement-progress {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .progress-text {
+        text-align: center;
+      }
+      .category-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+      }
+    }
+    @media (max-width:500px){
+      .rewards-stats {
+        grid-template-columns: 1fr;
+      }
+      .stat-card {
+        padding: 16px;
       }
     }
   </style>
@@ -516,7 +1228,6 @@
             <h2 id="heroTitle">Manage Your Food Items</h2>
             <p id="heroSubtitle">Add items to track their expiry dates</p>
           </div>
-          <!-- Removed placeholder images -->
         </section>
 
         <section class="section-title" aria-labelledby="title-check">
@@ -575,7 +1286,6 @@
 
       <!-- RECIPE VIEW -->
       <div id="view-recipe" style="display:none">
-        <!-- Recipe List View -->
         <div id="recipe-list-view">
           <button class="recipe-back" id="recipe-back">← Back</button>
           <h3 style="text-align:center;margin:0 0 12px">Recipes</h3>
@@ -588,11 +1298,159 @@
           </div>
         </div>
 
-        <!-- Recipe Detail View -->
         <div id="recipe-detail-view" style="display:none">
           <button class="recipe-back" id="recipe-detail-back">← Back to Recipes</button>
-          <div class="recipe-detail" id="recipe-detail-content">
-            <!-- Recipe details will be inserted here -->
+          <div class="recipe-detail" id="recipe-detail-content"></div>
+        </div>
+      </div>
+
+      <!-- REWARDS/ACHIEVEMENTS VIEW - IMPROVED -->
+      <div id="view-reward" style="display:none">
+        <div class="rewards-header">
+          <h2>🏆 Your Achievements</h2>
+          <p>Complete challenges to earn badges, XP, and level up!</p>
+        </div>
+
+        <div class="level-info">
+          <div class="level-display" id="levelDisplay">1</div>
+          <div class="level-details">
+            <div class="level-title">Level <span id="levelNumber">1</span> Explorer</div>
+            <div class="level-progress">
+              <div class="level-progress-bar">
+                <div class="level-progress-fill" id="levelProgressFill" style="width: 0%"></div>
+              </div>
+              <div class="level-next">
+                <span id="currentXP">0</span> XP
+                <span id="nextLevelXP">100 XP for next level</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rewards-stats">
+          <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-number" id="totalXP">0</div>
+            <div class="stat-label">Total XP Earned</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🏅</div>
+            <div class="stat-number" id="unlockedCount">0</div>
+            <div class="stat-label">Badges Unlocked</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-number" id="totalAchievements">20</div>
+            <div class="stat-label">Total Achievements</div>
+          </div>
+        </div>
+
+        <div class="how-to-unlock">
+          <h3>💡 How to Unlock Achievements</h3>
+          <div class="tips-list">
+            <div class="tip-item">
+              <div class="tip-icon">📦</div>
+              <div class="tip-content">
+                <div class="tip-title">Track Your Inventory</div>
+                <div class="tip-desc">Add food items regularly and mark them as used when consumed</div>
+              </div>
+            </div>
+            <div class="tip-item">
+              <div class="tip-icon">🍳</div>
+              <div class="tip-content">
+                <div class="tip-title">Cook with Expiring Items</div>
+                <div class="tip-desc">Use recipes that include items expiring soon to earn bonus XP</div>
+              </div>
+            </div>
+            <div class="tip-item">
+              <div class="tip-icon">🔥</div>
+              <div class="tip-content">
+                <div class="tip-title">Maintain Streaks</div>
+                <div class="tip-desc">Use the app daily and add items consistently to build streaks</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="achievements-container" id="achievements-container">
+          <!-- Inventory Management -->
+          <div class="achievement-category">
+            <div class="category-header">
+              <div class="category-icon">📦</div>
+              <div>
+                <h3 class="category-title">Inventory Management</h3>
+                <p class="category-description">Track and manage your food inventory efficiently</p>
+              </div>
+            </div>
+            <div class="achievements-grid" id="inventory-achievements">
+              <!-- Will be populated by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Cooking & Recipes -->
+          <div class="achievement-category">
+            <div class="category-header">
+              <div class="category-icon">🍳</div>
+              <div>
+                <h3 class="category-title">Cooking & Recipes</h3>
+                <p class="category-description">Cook recipes and make the most of your ingredients</p>
+              </div>
+            </div>
+            <div class="achievements-grid" id="cooking-achievements">
+              <!-- Will be populated by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Consistency & Streaks -->
+          <div class="achievement-category">
+            <div class="category-header">
+              <div class="category-icon">🔥</div>
+              <div>
+                <h3 class="category-title">Consistency & Streaks</h3>
+                <p class="category-description">Build habits by using the app regularly</p>
+              </div>
+            </div>
+            <div class="achievements-grid" id="streak-achievements">
+              <!-- Will be populated by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Special Challenges -->
+          <div class="achievement-category">
+            <div class="category-header">
+              <div class="category-icon">🎯</div>
+              <div>
+                <h3 class="category-title">Special Challenges</h3>
+                <p class="category-description">Complete special challenges for extra rewards</p>
+              </div>
+            </div>
+            <div class="achievements-grid" id="special-achievements">
+              <!-- Will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATION VIEW -->
+      <div id="view-notification" style="display:none">
+        <div class="notification-header">
+          <h2>🔔 Notifications</h2>
+          <p>Stay updated with your food items, recipes, and achievements</p>
+        </div>
+
+        <div class="notification-filters" id="notification-filters">
+          <button class="notification-filter active" data-filter="all">All</button>
+          <button class="notification-filter" data-filter="expired">Expired Items</button>
+          <button class="notification-filter" data-filter="soon">Expiring Soon</button>
+          <button class="notification-filter" data-filter="recipe">Recipe Suggestions</button>
+          <button class="notification-filter" data-filter="achievement">Achievements</button>
+        </div>
+
+        <div id="notifications-list">
+          <div class="empty-state">
+            <div class="icon">🔔</div>
+            <p>No notifications yet</p>
+            <p>Notifications will appear here based on your pantry items and activities</p>
           </div>
         </div>
       </div>
@@ -622,7 +1480,6 @@
         <div class="small-title">Suggestions</div>
         <div style="font-size:14px;margin-bottom:8px" id="suggestionsSubtitle">Try these recipes with items that are expiring soon</div>
         <div class="recipe-grid" id="suggestions-list">
-          <!-- Dynamic content will be inserted here -->
           <div class="empty-state" style="padding:20px 0;min-height:auto">
             <div class="icon">🍳</div>
             <p>No recipes to suggest yet</p>
@@ -631,7 +1488,17 @@
         </div>
       </div>
 
-      <!-- Removed Scan Item Card -->
+      <!-- Recent Achievements Card -->
+      <div class="card">
+        <div class="small-title">Recent Achievements</div>
+        <div class="recipe-grid" id="recent-achievements">
+          <div class="empty-state" style="padding:20px 0;min-height:auto">
+            <div class="icon">🏆</div>
+            <p>No achievements yet</p>
+            <p style="font-size:12px">Complete challenges to earn badges</p>
+          </div>
+        </div>
+      </div>
     </aside>
   </div>
 
@@ -697,6 +1564,17 @@
     </div>
   </div>
 
+  <!-- ACHIEVEMENT NOTIFICATION TOAST -->
+  <div class="notification-toast" id="achievementToast">
+    <div class="notification-icon" id="toastIcon">🏆</div>
+    <div>
+      <div style="font-weight:600;margin-bottom:4px" id="toastTitle">Achievement Unlocked!</div>
+      <div style="font-size:13px;color:var(--muted)" id="toastMessage">You've earned a new badge</div>
+      <div style="font-size:11px;color:var(--accent);margin-top:4px" id="toastXP">+10 XP</div>
+    </div>
+    <button style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);margin-left:auto" id="toastClose">×</button>
+  </div>
+
   <!-- BOTTOM NAVIGATION -->
   <div class="bottom-nav" role="navigation" aria-label="Main navigation">
     <div class="bottom-nav-inner">
@@ -710,7 +1588,7 @@
 
         <div class="nav-group right">
           <button class="nav-btn" id="nav-recipe" title="Recipe"><span class="icon">📚</span><span class="text">Recipe</span></button>
-          <button class="nav-btn" id="nav-reward" title="Reward"><span class="icon">🎁</span><span class="text">Reward</span></button>
+          <button class="nav-btn" id="nav-reward" title="Reward"><span class="icon">🏆</span><span class="text">Reward</span></button>
         </div>
       </div>
     </div>
@@ -734,7 +1612,8 @@
     updateDoc,
     getDoc,
     getDocs,
-    setDoc
+    setDoc,
+    increment
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
   // Firebase configuration
@@ -782,6 +1661,29 @@
   const recipeDetailBack = document.getElementById('recipe-detail-back');
   const suggestionsList = document.getElementById('suggestions-list');
   const suggestionsSubtitle = document.getElementById('suggestionsSubtitle');
+  const recentAchievementsEl = document.getElementById('recent-achievements');
+  const inventoryAchievementsEl = document.getElementById('inventory-achievements');
+  const cookingAchievementsEl = document.getElementById('cooking-achievements');
+  const streakAchievementsEl = document.getElementById('streak-achievements');
+  const specialAchievementsEl = document.getElementById('special-achievements');
+  const totalXpEl = document.getElementById('totalXP');
+  const unlockedCountEl = document.getElementById('unlockedCount');
+  const totalAchievementsEl = document.getElementById('totalAchievements');
+  const levelNumberEl = document.getElementById('levelNumber');
+  const levelDisplayEl = document.getElementById('levelDisplay');
+  const currentXpEl = document.getElementById('currentXP');
+  const nextLevelXpEl = document.getElementById('nextLevelXP');
+  const levelProgressFill = document.getElementById('levelProgressFill');
+  const achievementToast = document.getElementById('achievementToast');
+  const toastIcon = document.getElementById('toastIcon');
+  const toastTitle = document.getElementById('toastTitle');
+  const toastMessage = document.getElementById('toastMessage');
+  const toastXP = document.getElementById('toastXP');
+  const toastClose = document.getElementById('toastClose');
+  
+  // Notification elements
+  const notificationsList = document.getElementById('notifications-list');
+  const notificationFilters = document.getElementById('notification-filters');
   
   // Add Item Modal Elements
   const addItemModal = document.getElementById('addItemModal');
@@ -801,6 +1703,288 @@
   let recipes = [];
   let currentRecipeDetail = null;
   let unsubscribeRecipes = null;
+  let userAchievements = {};
+  let userStats = {};
+  let achievements = [];
+  let notifications = [];
+  let activeNotificationFilter = 'all';
+  
+  // Achievement Definitions - Enhanced with better descriptions
+  const ACHIEVEMENTS = [
+    // Inventory Management
+    {
+      id: 'first_item',
+      name: 'First Step',
+      description: 'Welcome to ExpireMe! Start your journey by adding your first food item.',
+      requirements: 'Add 1 food item to your inventory',
+      icon: '📦',
+      tier: 'bronze',
+      category: 'inventory',
+      xp: 10,
+      target: 1,
+      progressType: 'items_added',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'pantry_organizer',
+      name: 'Pantry Organizer',
+      description: 'Keep your pantry well-stocked and organized.',
+      requirements: 'Add 10 items to your pantry',
+      icon: '🗂️',
+      tier: 'silver',
+      category: 'inventory',
+      xp: 25,
+      target: 10,
+      progressType: 'items_added',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'inventory_master',
+      name: 'Inventory Master',
+      description: 'Become a master of inventory management with a substantial collection.',
+      requirements: 'Add 50 items total to your inventory',
+      icon: '📊',
+      tier: 'gold',
+      category: 'inventory',
+      xp: 100,
+      target: 50,
+      progressType: 'items_added',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'fresh_keeper',
+      name: 'Fresh Keeper',
+      description: 'Maintain fresh items and prevent food waste.',
+      requirements: 'Keep 10 items fresh (not expired)',
+      icon: '✅',
+      tier: 'silver',
+      category: 'inventory',
+      xp: 30,
+      target: 10,
+      progressType: 'fresh_items',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'no_waste',
+      name: 'Zero Waste Hero',
+      description: 'Reduce food waste by using items before they expire.',
+      requirements: 'Use up 10 items before they expire',
+      icon: '♻️',
+      tier: 'gold',
+      category: 'inventory',
+      xp: 75,
+      target: 10,
+      progressType: 'items_used',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'storage_pro',
+      name: 'Storage Pro',
+      description: 'Organize your food efficiently across all storage locations.',
+      requirements: 'Have items in all 3 storage locations (Fridge, Freezer, Pantry)',
+      icon: '🏢',
+      tier: 'silver',
+      category: 'inventory',
+      xp: 40,
+      target: 3,
+      progressType: 'storage_locations',
+      unlocked: false,
+      progress: 0
+    },
+    
+    // Cooking & Recipes
+    {
+      id: 'first_recipe',
+      name: 'First Recipe',
+      description: 'Start your cooking journey with your first recipe.',
+      requirements: 'Cook your first recipe using ExpireMe',
+      icon: '🍳',
+      tier: 'bronze',
+      category: 'cooking',
+      xp: 15,
+      target: 1,
+      progressType: 'recipes_cooked',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'home_chef',
+      name: 'Home Chef',
+      description: 'Expand your cooking repertoire with different recipes.',
+      requirements: 'Cook 5 different recipes',
+      icon: '👨‍🍳',
+      tier: 'silver',
+      category: 'cooking',
+      xp: 50,
+      target: 5,
+      progressType: 'recipes_cooked',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'master_chef',
+      name: 'Master Chef',
+      description: 'Become a true culinary expert with extensive recipe experience.',
+      requirements: 'Cook 20 recipes total',
+      icon: '🌟',
+      tier: 'gold',
+      category: 'cooking',
+      xp: 150,
+      target: 20,
+      progressType: 'recipes_cooked',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'ingredient_saver',
+      name: 'Ingredient Saver',
+      description: 'Prevent food waste by using expiring items in your cooking.',
+      requirements: 'Cook a recipe using expiring items',
+      icon: '⏰',
+      tier: 'bronze',
+      category: 'cooking',
+      xp: 20,
+      target: 1,
+      progressType: 'expiring_recipes',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'recipe_explorer',
+      name: 'Recipe Explorer',
+      description: 'Discover new recipes and expand your culinary knowledge.',
+      requirements: 'View 10 different recipes',
+      icon: '🔍',
+      tier: 'silver',
+      category: 'cooking',
+      xp: 30,
+      target: 10,
+      progressType: 'recipes_viewed',
+      unlocked: false,
+      progress: 0
+    },
+    
+    // Consistency & Streaks
+    {
+      id: 'daily_user',
+      name: 'Daily User',
+      description: 'Build a habit of checking your food inventory regularly.',
+      requirements: 'Use the app for 3 consecutive days',
+      icon: '🔥',
+      tier: 'bronze',
+      category: 'streak',
+      xp: 25,
+      target: 3,
+      progressType: 'login_streak',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'weekly_warrior',
+      name: 'Weekly Warrior',
+      description: 'Demonstrate consistent commitment to food management.',
+      requirements: 'Use the app for 7 consecutive days',
+      icon: '💪',
+      tier: 'silver',
+      category: 'streak',
+      xp: 75,
+      target: 7,
+      progressType: 'login_streak',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'monthly_master',
+      name: 'Monthly Master',
+      description: 'Achieve the ultimate consistency in food management.',
+      requirements: 'Use the app for 30 consecutive days',
+      icon: '📅',
+      tier: 'gold',
+      category: 'streak',
+      xp: 200,
+      target: 30,
+      progressType: 'login_streak',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'consistent_tracker',
+      name: 'Consistent Tracker',
+      description: 'Maintain regular updates to your food inventory.',
+      requirements: 'Add items for 5 days in a row',
+      icon: '📝',
+      tier: 'silver',
+      category: 'streak',
+      xp: 60,
+      target: 5,
+      progressType: 'add_streak',
+      unlocked: false,
+      progress: 0
+    },
+    
+    // Special Challenges
+    {
+      id: 'perfect_week',
+      name: 'Perfect Week',
+      description: 'Achieve zero food waste for an entire week.',
+      requirements: 'No expired items for 7 days',
+      icon: '⭐',
+      tier: 'gold',
+      category: 'special',
+      xp: 100,
+      target: 7,
+      progressType: 'no_expired_streak',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'quick_cook',
+      name: 'Quick Cook',
+      description: 'Demonstrate your cooking efficiency and creativity.',
+      requirements: 'Cook 3 recipes in one day',
+      icon: '⚡',
+      tier: 'silver',
+      category: 'special',
+      xp: 80,
+      target: 3,
+      progressType: 'recipes_one_day',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'variety_seeker',
+      name: 'Variety Seeker',
+      description: 'Explore a wide range of different food types.',
+      requirements: 'Add 15 different types of food',
+      icon: '🌈',
+      tier: 'gold',
+      category: 'special',
+      xp: 120,
+      target: 15,
+      progressType: 'unique_foods',
+      unlocked: false,
+      progress: 0
+    },
+    {
+      id: 'budget_chef',
+      name: 'Budget Chef',
+      description: 'Save money by cooking with ingredients you already have.',
+      requirements: 'Cook recipes worth $50+ in savings',
+      icon: '💰',
+      tier: 'gold',
+      category: 'special',
+      xp: 150,
+      target: 50,
+      progressType: 'money_saved',
+      unlocked: false,
+      progress: 0
+    }
+  ];
 
   // Set current date
   function updateCurrentDate() {
@@ -815,16 +1999,12 @@
   const today = new Date().toISOString().split('T')[0];
   itemExpiry.min = today;
 
-  // Function to check and add missing default recipes every time
+  // Initialize default recipes
   async function initializeDefaultRecipes() {
     try {
       console.log('Checking for default recipes in Firestore...');
-      
-      // Get all existing recipes
       const recipesRef = collection(db, 'recipes');
       const querySnapshot = await getDocs(recipesRef);
-      
-      // Create a map of existing recipe IDs for quick lookup
       const existingRecipeIds = new Set();
       querySnapshot.forEach(doc => {
         existingRecipeIds.add(doc.id);
@@ -832,49 +2012,734 @@
       
       console.log('Existing recipe IDs:', Array.from(existingRecipeIds));
       
-      // Track which recipes were added
-      const addedRecipes = [];
-      const skippedRecipes = [];
-      
-      // Check each default recipe
-      for (const recipe of defaultRecipes) {
-        if (!existingRecipeIds.has(recipe.id)) {
-          try {
-            // Create a document reference with the specified ID
-            const recipeRef = doc(db, 'recipes', recipe.id);
-            
-            // Prepare recipe data without the id field
-            const { id, ...recipeData } = recipe;
-            
-            await setDoc(recipeRef, {
-              ...recipeData,
-              createdAt: serverTimestamp()
-            });
-            
-            addedRecipes.push(recipe.name);
-            console.log(`✓ Added missing recipe: ${recipe.name} (ID: ${recipe.id})`);
-          } catch (recipeError) {
-            console.error(`Error adding recipe ${recipe.name}:`, recipeError);
-          }
-        } else {
-          skippedRecipes.push(recipe.name);
-          console.log(`✓ Recipe already exists: ${recipe.name}`);
-        }
-      }
-      
-      // Log results
-      if (addedRecipes.length > 0) {
-        console.log(`✅ Added ${addedRecipes.length} missing recipes:`, addedRecipes);
-      } else {
-        console.log('✅ All default recipes are already in the database.');
-      }
-      
     } catch (error) {
       console.error('Error checking default recipes:', error);
     }
   }
 
-  // Update hero message based on items - IMPROVED VERSION
+  // Show achievement notification
+  function showAchievementNotification(achievement) {
+    toastIcon.textContent = achievement.icon;
+    toastTitle.textContent = 'Achievement Unlocked!';
+    toastMessage.textContent = achievement.name;
+    toastXP.textContent = `+${achievement.xp} XP`;
+    
+    achievementToast.classList.add('show');
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+      achievementToast.classList.remove('show');
+    }, 5000);
+  }
+
+  // Calculate level from XP
+  function calculateLevel(xp) {
+    const level = Math.floor(xp / 100) + 1;
+    const nextLevelXp = level * 100;
+    const currentLevelXp = (level - 1) * 100;
+    const progress = ((xp - currentLevelXp) / 100) * 100;
+    
+    return { level, progress, nextLevelXp, currentLevelXp };
+  }
+
+  // Update level display
+  function updateLevelDisplay() {
+    const xp = userStats.total_xp || 0;
+    const levelInfo = calculateLevel(xp);
+    
+    levelNumberEl.textContent = levelInfo.level;
+    levelDisplayEl.textContent = levelInfo.level;
+    currentXpEl.textContent = `${xp} XP`;
+    nextLevelXpEl.textContent = `${levelInfo.nextLevelXp} XP for next level`;
+    levelProgressFill.style.width = `${levelInfo.progress}%`;
+  }
+
+  // Generate notifications based on user's pantry items and activities
+  function generateNotifications() {
+    notifications = [];
+    
+    if (!currentUser || userItems.length === 0) {
+      return;
+    }
+    
+    const now = new Date();
+    
+    // 1. Expired items notifications
+    const expiredItems = userItems.filter(item => item.status === 'expired');
+    if (expiredItems.length > 0) {
+      expiredItems.forEach(item => {
+        notifications.push({
+          id: `expired_${item.id}`,
+          type: 'expired',
+          title: `Item Expired: ${item.name}`,
+          message: `${item.name} expired ${Math.abs(item.days)} day${Math.abs(item.days) !== 1 ? 's' : ''} ago. Consider disposing it.`,
+          timestamp: new Date(now.getTime() - Math.random() * 86400000 * 7), // Random time in past 7 days
+          unread: true,
+          itemId: item.id,
+          priority: 'high'
+        });
+      });
+    }
+    
+    // 2. Items expiring soon notifications
+    const soonItems = userItems.filter(item => item.status === 'soon');
+    if (soonItems.length > 0) {
+      soonItems.forEach(item => {
+        notifications.push({
+          id: `soon_${item.id}`,
+          type: 'soon',
+          title: `Item Expiring Soon: ${item.name}`,
+          message: `${item.name} expires in ${item.days} day${item.days !== 1 ? 's' : ''}. Use it soon!`,
+          timestamp: new Date(now.getTime() - Math.random() * 86400000 * 3), // Random time in past 3 days
+          unread: true,
+          itemId: item.id,
+          priority: 'medium'
+        });
+      });
+    }
+    
+    // 3. Recipe suggestions based on expiring items
+    if (recipes.length > 0 && soonItems.length > 0) {
+      const expiringItemNames = soonItems.map(item => item.name.toLowerCase());
+      
+      recipes.forEach(recipe => {
+        if (recipe.ingredients && Array.isArray(recipe.ingredients)) {
+          const matchingIngredients = recipe.ingredients.filter(ingredient => 
+            expiringItemNames.some(itemName => 
+              itemName.includes(ingredient.name.toLowerCase()) ||
+              ingredient.name.toLowerCase().includes(itemName)
+            )
+          );
+          
+          if (matchingIngredients.length > 0) {
+            notifications.push({
+              id: `recipe_${recipe.id}`,
+              type: 'recipe',
+              title: `Recipe Suggestion: ${recipe.name}`,
+              message: `Make ${recipe.name} with ${matchingIngredients.length} expiring ingredient${matchingIngredients.length !== 1 ? 's' : ''}`,
+              timestamp: new Date(now.getTime() - Math.random() * 86400000 * 5), // Random time in past 5 days
+              unread: true,
+              recipeId: recipe.id,
+              priority: 'medium'
+            });
+          }
+        }
+      });
+    }
+    
+    // 4. Achievement notifications
+    const unlockedAchievements = achievements.filter(a => a.unlocked);
+    unlockedAchievements.forEach(achievement => {
+      const unlockedDate = userAchievements[achievement.id]?.unlockedAt;
+      if (unlockedDate) {
+        notifications.push({
+          id: `achievement_${achievement.id}`,
+          type: 'achievement',
+          title: `Achievement Unlocked: ${achievement.name}`,
+          message: achievement.description,
+          timestamp: new Date(unlockedDate),
+          unread: false,
+          achievementId: achievement.id,
+          priority: 'low'
+        });
+      }
+    });
+    
+    // 5. General notifications about pantry status
+    const totalItems = userItems.length;
+    const freshItems = userItems.filter(item => item.status === 'fresh').length;
+    
+    if (totalItems > 0) {
+      const freshnessPercentage = Math.round((freshItems / totalItems) * 100);
+      
+      if (freshnessPercentage >= 80) {
+        notifications.push({
+          id: 'pantry_status_good',
+          type: 'info',
+          title: 'Great Job! Your pantry is in good shape',
+          message: `${freshnessPercentage}% of your items are fresh. Keep up the good work!`,
+          timestamp: new Date(now.getTime() - Math.random() * 86400000 * 2),
+          unread: true,
+          priority: 'low'
+        });
+      } else if (freshnessPercentage <= 30) {
+        notifications.push({
+          id: 'pantry_status_low',
+          type: 'info',
+          title: 'Check your pantry',
+          message: `Only ${freshnessPercentage}% of your items are fresh. Consider using or replacing items soon.`,
+          timestamp: new Date(now.getTime() - Math.random() * 86400000),
+          unread: true,
+          priority: 'medium'
+        });
+      }
+    }
+    
+    // Sort notifications by timestamp (newest first)
+    notifications.sort((a, b) => b.timestamp - a.timestamp);
+    
+    // Update notification badge on bell icon if there are unread notifications
+    updateNotificationBadge();
+  }
+
+  // Update notification badge on bell icon
+  function updateNotificationBadge() {
+    const unreadCount = notifications.filter(n => n.unread).length;
+    const bellIcon = document.getElementById('btnBell');
+    
+    if (unreadCount > 0) {
+      // Add badge to bell icon
+      bellIcon.innerHTML = `🔔<span style="position:absolute;top:-5px;right:-5px;background:var(--danger);color:white;border-radius:50%;width:18px;height:18px;font-size:10px;display:flex;align-items:center;justify-content:center">${unreadCount}</span>`;
+    } else {
+      bellIcon.innerHTML = '🔔';
+    }
+  }
+
+  // Render notifications based on current filter
+  function renderNotifications() {
+    notificationsList.innerHTML = '';
+    
+    // Filter notifications based on active filter
+    let filteredNotifications = notifications;
+    if (activeNotificationFilter !== 'all') {
+      filteredNotifications = notifications.filter(n => n.type === activeNotificationFilter);
+    }
+    
+    if (filteredNotifications.length === 0) {
+      notificationsList.innerHTML = `
+        <div class="notification-empty">
+          <div class="icon">${activeNotificationFilter === 'all' ? '🔔' : 
+                          activeNotificationFilter === 'expired' ? '⚠️' : 
+                          activeNotificationFilter === 'soon' ? '⏰' : 
+                          activeNotificationFilter === 'recipe' ? '🍳' : 
+                          activeNotificationFilter === 'achievement' ? '🏆' : '📋'}</div>
+          <p>No ${activeNotificationFilter === 'all' ? '' : activeNotificationFilter} notifications</p>
+          <p style="font-size:12px">${activeNotificationFilter === 'all' ? 'You\'re all caught up!' : 
+                                      'Check back later for updates'}</p>
+        </div>
+      `;
+      return;
+    }
+    
+    filteredNotifications.forEach(notification => {
+      const notificationCard = document.createElement('div');
+      notificationCard.className = `notification-card ${notification.type} ${notification.unread ? 'unread' : ''}`;
+      
+      // Determine icon based on notification type
+      let icon = '🔔';
+      let iconClass = 'notification-icon-info';
+      
+      switch(notification.type) {
+        case 'expired':
+          icon = '⚠️';
+          iconClass = 'notification-icon-expired';
+          break;
+        case 'soon':
+          icon = '⏰';
+          iconClass = 'notification-icon-soon';
+          break;
+        case 'recipe':
+          icon = '🍳';
+          iconClass = 'notification-icon-recipe';
+          break;
+        case 'achievement':
+          icon = '🏆';
+          iconClass = 'notification-icon-achievement';
+          break;
+        default:
+          icon = '📋';
+          iconClass = 'notification-icon-info';
+      }
+      
+      // Format timestamp
+      const timeDiff = Math.floor((new Date() - notification.timestamp) / 1000);
+      let timeAgo = '';
+      
+      if (timeDiff < 60) {
+        timeAgo = 'Just now';
+      } else if (timeDiff < 3600) {
+        const minutes = Math.floor(timeDiff / 60);
+        timeAgo = `${minutes}m ago`;
+      } else if (timeDiff < 86400) {
+        const hours = Math.floor(timeDiff / 3600);
+        timeAgo = `${hours}h ago`;
+      } else if (timeDiff < 604800) {
+        const days = Math.floor(timeDiff / 86400);
+        timeAgo = `${days}d ago`;
+      } else {
+        timeAgo = notification.timestamp.toLocaleDateString();
+      }
+      
+      notificationCard.innerHTML = `
+        <div class="notification-icon-small ${iconClass}">
+          ${icon}
+        </div>
+        <div class="notification-content">
+          <div class="notification-title">${notification.title}</div>
+          <div class="notification-message">${notification.message}</div>
+          <div class="notification-meta">
+            <span class="notification-time">${timeAgo}</span>
+            <div class="notification-actions">
+              ${notification.unread ? '<button class="notification-action-btn dismiss" data-id="' + notification.id + '">Dismiss</button>' : ''}
+              ${notification.itemId ? '<button class="notification-action-btn view" data-id="' + notification.id + '" data-type="item">View Item</button>' : 
+                notification.recipeId ? '<button class="notification-action-btn view" data-id="' + notification.id + '" data-type="recipe">View Recipe</button>' :
+                notification.achievementId ? '<button class="notification-action-btn view" data-id="' + notification.id + '" data-type="achievement">View Achievement</button>' : ''}
+            </div>
+          </div>
+        </div>
+      `;
+      
+      notificationsList.appendChild(notificationCard);
+    });
+    
+    // Add event listeners to notification buttons
+    document.querySelectorAll('.notification-action-btn.dismiss').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const notificationId = e.target.dataset.id;
+        markNotificationAsRead(notificationId);
+      });
+    });
+    
+    document.querySelectorAll('.notification-action-btn.view').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const notificationId = e.target.dataset.id;
+        const type = e.target.dataset.type;
+        handleNotificationAction(notificationId, type);
+      });
+    });
+  }
+
+  // Mark notification as read
+  function markNotificationAsRead(notificationId) {
+    const notificationIndex = notifications.findIndex(n => n.id === notificationId);
+    if (notificationIndex !== -1) {
+      notifications[notificationIndex].unread = false;
+      renderNotifications();
+      updateNotificationBadge();
+    }
+  }
+
+  // Handle notification action (view item, recipe, or achievement)
+  function handleNotificationAction(notificationId, type) {
+    const notification = notifications.find(n => n.id === notificationId);
+    if (!notification) return;
+    
+    markNotificationAsRead(notificationId);
+    
+    switch(type) {
+      case 'item':
+        if (notification.itemId) {
+          // Find the item and show relevant view
+          const item = userItems.find(i => i.id === notification.itemId);
+          if (item) {
+            showView('storage');
+            // Highlight or filter to show this item
+            // For now, just show storage view
+          }
+        }
+        break;
+        
+      case 'recipe':
+        if (notification.recipeId) {
+          const recipe = recipes.find(r => r.id === notification.recipeId);
+          if (recipe) {
+            showView('recipe');
+            showRecipeDetail(recipe);
+          }
+        }
+        break;
+        
+      case 'achievement':
+        showView('reward');
+        // Scroll to the achievement if possible
+        break;
+    }
+  }
+
+  // Load user achievements and stats
+  async function loadUserAchievements() {
+    if (!currentUser) return;
+    
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      const userDoc = await getDoc(userRef);
+      
+      if (userDoc.exists()) {
+        userStats = userDoc.data().stats || {
+          total_xp: 0,
+          items_added: 0,
+          items_used: 0,
+          recipes_cooked: 0,
+          recipes_viewed: 0,
+          expiring_recipes: 0,
+          login_streak: 0,
+          add_streak: 0,
+          no_expired_streak: 0,
+          recipes_one_day: 0,
+          unique_foods: new Set(),
+          money_saved: 0,
+          last_login: new Date().toISOString().split('T')[0],
+          last_add_date: null
+        };
+        
+        userAchievements = userDoc.data().achievements || {};
+      } else {
+        // Initialize new user
+        userStats = {
+          total_xp: 0,
+          items_added: 0,
+          items_used: 0,
+          recipes_cooked: 0,
+          recipes_viewed: 0,
+          expiring_recipes: 0,
+          login_streak: 1,
+          add_streak: 0,
+          no_expired_streak: 0,
+          recipes_one_day: 0,
+          unique_foods: new Set(),
+          money_saved: 0,
+          last_login: new Date().toISOString().split('T')[0],
+          last_add_date: null
+        };
+        
+        userAchievements = {};
+        
+        // Save initial user document
+        await setDoc(userRef, {
+          stats: userStats,
+          achievements: userAchievements,
+          createdAt: serverTimestamp()
+        });
+      }
+      
+      updateAchievementsProgress();
+      renderAchievements();
+      updateRewardsStats();
+      updateRecentAchievements();
+      updateLevelDisplay();
+      
+    } catch (error) {
+      console.error('Error loading user achievements:', error);
+    }
+  }
+
+  // Update achievement progress based on user stats
+  function updateAchievementsProgress() {
+    achievements = ACHIEVEMENTS.map(achievement => {
+      const progress = calculateAchievementProgress(achievement);
+      const unlocked = userAchievements[achievement.id] || false;
+      
+      return {
+        ...achievement,
+        progress,
+        unlocked
+      };
+    });
+  }
+
+  // Calculate progress for an achievement
+  function calculateAchievementProgress(achievement) {
+    switch(achievement.progressType) {
+      case 'items_added':
+        return userStats.items_added || 0;
+      case 'items_used':
+        return userStats.items_used || 0;
+      case 'recipes_cooked':
+        return userStats.recipes_cooked || 0;
+      case 'recipes_viewed':
+        return userStats.recipes_viewed || 0;
+      case 'expiring_recipes':
+        return userStats.expiring_recipes || 0;
+      case 'login_streak':
+        return userStats.login_streak || 0;
+      case 'add_streak':
+        return userStats.add_streak || 0;
+      case 'no_expired_streak':
+        return userStats.no_expired_streak || 0;
+      case 'recipes_one_day':
+        return userStats.recipes_one_day || 0;
+      case 'fresh_items':
+        return userItems.filter(item => item.status === 'fresh').length;
+      case 'storage_locations':
+        const locations = new Set(userItems.map(item => item.location));
+        return locations.size;
+      case 'unique_foods':
+        return userStats.unique_foods?.size || 0;
+      case 'money_saved':
+        return userStats.money_saved || 0;
+      default:
+        return 0;
+    }
+  }
+
+  // Check and unlock achievements
+  async function checkAchievements() {
+    if (!currentUser) return;
+    
+    const userRef = doc(db, 'users', currentUser.uid);
+    let newAchievements = [];
+    
+    for (const achievement of achievements) {
+      if (!achievement.unlocked && achievement.progress >= achievement.target) {
+        // Unlock achievement
+        achievement.unlocked = true;
+        userAchievements[achievement.id] = {
+          unlockedAt: new Date().toISOString(),
+          xp: achievement.xp
+        };
+        
+        // Add XP
+        userStats.total_xp = (userStats.total_xp || 0) + achievement.xp;
+        
+        newAchievements.push(achievement);
+        
+        // Update in Firestore
+        await updateDoc(userRef, {
+          [`achievements.${achievement.id}`]: userAchievements[achievement.id],
+          'stats.total_xp': userStats.total_xp
+        });
+      }
+    }
+    
+    // Show notifications for new achievements
+    newAchievements.forEach(achievement => {
+      showAchievementNotification(achievement);
+    });
+    
+    if (newAchievements.length > 0) {
+      renderAchievements();
+      updateRewardsStats();
+      updateRecentAchievements();
+      updateLevelDisplay();
+      generateNotifications(); // Regenerate notifications to include new achievements
+      renderNotifications();
+    }
+  }
+
+  // Render achievements
+  function renderAchievements() {
+    // Clear containers
+    inventoryAchievementsEl.innerHTML = '';
+    cookingAchievementsEl.innerHTML = '';
+    streakAchievementsEl.innerHTML = '';
+    specialAchievementsEl.innerHTML = '';
+    
+    // Filter achievements by category
+    const inventoryAchievements = achievements.filter(a => a.category === 'inventory');
+    const cookingAchievements = achievements.filter(a => a.category === 'cooking');
+    const streakAchievements = achievements.filter(a => a.category === 'streak');
+    const specialAchievements = achievements.filter(a => a.category === 'special');
+    
+    // Render each category
+    renderAchievementList(inventoryAchievements, inventoryAchievementsEl);
+    renderAchievementList(cookingAchievements, cookingAchievementsEl);
+    renderAchievementList(streakAchievements, streakAchievementsEl);
+    renderAchievementList(specialAchievements, specialAchievementsEl);
+  }
+  
+  function renderAchievementList(achievementList, container) {
+    if (achievementList.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state" style="padding:20px;">
+          <div class="icon">🏆</div>
+          <p>No achievements in this category yet</p>
+        </div>
+      `;
+      return;
+    }
+    
+    achievementList.forEach(achievement => {
+      const progressPercent = Math.min((achievement.progress / achievement.target) * 100, 100);
+      const progressText = `${achievement.progress}/${achievement.target}`;
+      const tierLabel = achievement.tier === 'gold' ? '🏅' : achievement.tier === 'silver' ? '🥈' : '🥉';
+      
+      const card = document.createElement('div');
+      card.className = `achievement-card ${achievement.unlocked ? 'unlocked' : 'locked'}`;
+      
+      card.innerHTML = `
+        <div class="achievement-icon achievement-${achievement.tier}">
+          ${achievement.icon}
+          <div class="tier-indicator tier-${achievement.tier}">${tierLabel}</div>
+        </div>
+        <div class="achievement-info">
+          <div class="achievement-name">
+            ${achievement.name}
+            <span class="achievement-xp">+${achievement.xp} XP</span>
+          </div>
+          <div class="achievement-desc">${achievement.description}</div>
+          <div class="achievement-requirements">${achievement.requirements}</div>
+          <div class="achievement-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${progressPercent}%"></div>
+            </div>
+            <div class="progress-text">${progressText}</div>
+          </div>
+          ${achievement.unlocked && userAchievements[achievement.id]?.unlockedAt ? 
+            `<div class="unlocked-date">Unlocked: ${new Date(userAchievements[achievement.id].unlockedAt).toLocaleDateString()}</div>` : 
+            `<div class="achievement-status ${achievement.unlocked ? 'status-unlocked' : 'status-locked'}">
+              ${achievement.unlocked ? '✓ UNLOCKED' : '🔒 LOCKED'}
+            </div>`
+          }
+        </div>
+      `;
+      
+      container.appendChild(card);
+    });
+  }
+
+  // Update rewards stats
+  function updateRewardsStats() {
+    const unlockedCount = Object.keys(userAchievements).length;
+    
+    totalXpEl.textContent = userStats.total_xp || 0;
+    unlockedCountEl.textContent = unlockedCount;
+    totalAchievementsEl.textContent = ACHIEVEMENTS.length;
+  }
+
+  // Update recent achievements in sidebar
+  function updateRecentAchievements() {
+    const unlockedAchievements = achievements.filter(a => a.unlocked);
+    const recentAchievements = unlockedAchievements
+      .sort((a, b) => {
+        const dateA = new Date(userAchievements[a.id]?.unlockedAt || 0);
+        const dateB = new Date(userAchievements[b.id]?.unlockedAt || 0);
+        return dateB - dateA;
+      })
+      .slice(0, 3);
+    
+    recentAchievementsEl.innerHTML = '';
+    
+    if (recentAchievements.length === 0) {
+      recentAchievementsEl.innerHTML = `
+        <div class="empty-state" style="padding:20px 0;min-height:auto">
+          <div class="icon">🏆</div>
+          <p>No achievements yet</p>
+          <p style="font-size:12px">Complete challenges to earn badges</p>
+        </div>
+      `;
+      return;
+    }
+    
+    recentAchievements.forEach(achievement => {
+      const achievementDiv = document.createElement('div');
+      achievementDiv.className = 'recipe';
+      
+      const tierColor = achievement.tier === 'gold' ? '#ffd700' : 
+                       achievement.tier === 'silver' ? '#c0c0c0' : '#cd7f32';
+      
+      achievementDiv.innerHTML = `
+        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg, ${tierColor}, 
+          ${achievement.tier === 'gold' ? '#ffed4e' : achievement.tier === 'silver' ? '#e0e0e0' : '#e6b85c'}); 
+          display:flex;align-items:center;justify-content:center;font-size:18px">
+          ${achievement.icon}
+        </div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:13px">${achievement.name}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">${achievement.description.substring(0, 40)}...</div>
+          <div style="font-size:11px;color:${tierColor};font-weight:600;margin-top:2px">+${achievement.xp} XP</div>
+        </div>
+      `;
+      
+      recentAchievementsEl.appendChild(achievementDiv);
+    });
+  }
+
+  // Update user stats when actions occur
+  async function updateUserStats(updates) {
+    if (!currentUser) return;
+    
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      const statsUpdates = {};
+      
+      // Convert Set to Array for Firestore
+      if (updates.unique_foods && updates.unique_foods instanceof Set) {
+        updates.unique_foods = Array.from(updates.unique_foods);
+      }
+      
+      Object.keys(updates).forEach(key => {
+        statsUpdates[`stats.${key}`] = updates[key];
+      });
+      
+      await updateDoc(userRef, statsUpdates);
+      
+      // Update local stats
+      Object.keys(updates).forEach(key => {
+        if (key === 'unique_foods' && Array.isArray(updates[key])) {
+          userStats[key] = new Set(updates[key]);
+        } else {
+          userStats[key] = updates[key];
+        }
+      });
+      
+      updateAchievementsProgress();
+      await checkAchievements();
+      updateRewardsStats();
+      updateRecentAchievements();
+      updateLevelDisplay();
+      
+    } catch (error) {
+      console.error('Error updating user stats:', error);
+    }
+  }
+
+  // Check login streak
+  async function checkLoginStreak() {
+    if (!currentUser) return;
+    
+    const today = new Date().toISOString().split('T')[0];
+    const lastLogin = userStats.last_login;
+    
+    if (lastLogin === today) {
+      return; // Already logged in today
+    }
+    
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    
+    let newStreak = 1;
+    if (lastLogin === yesterdayStr) {
+      newStreak = (userStats.login_streak || 0) + 1;
+    }
+    
+    await updateUserStats({
+      login_streak: newStreak,
+      last_login: today
+    });
+  }
+
+  // Check add streak
+  async function checkAddStreak(itemName) {
+    const today = new Date().toISOString().split('T')[0];
+    const lastAddDate = userStats.last_add_date;
+    
+    let newStreak = 1;
+    if (lastAddDate === today) {
+      newStreak = userStats.add_streak || 1;
+    } else if (lastAddDate) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+      
+      if (lastAddDate === yesterdayStr) {
+        newStreak = (userStats.add_streak || 0) + 1;
+      }
+    }
+    
+    // Update unique foods
+    const uniqueFoods = userStats.unique_foods || new Set();
+    uniqueFoods.add(itemName.toLowerCase());
+    
+    await updateUserStats({
+      items_added: (userStats.items_added || 0) + 1,
+      add_streak: newStreak,
+      last_add_date: today,
+      unique_foods: uniqueFoods
+    });
+  }
+
+  // Update hero message based on items
   function updateHeroMessage() {
     if (userItems.length === 0) {
       heroTitle.textContent = "Welcome to ExpireMe!";
@@ -918,11 +2783,9 @@
     }
   }
 
-  // Update suggestions sidebar with recipes that can be made
+  // Update suggestions sidebar
   function updateSuggestions() {
     console.log('Updating suggestions...');
-    
-    // Clear current suggestions
     suggestionsList.innerHTML = '';
     
     if (userItems.length === 0) {
@@ -937,20 +2800,17 @@
       return;
     }
     
-    // Get recipes that can be made with available ingredients
     const availableRecipes = recipes.filter(recipe => {
       const availability = checkRecipeAvailability(recipe);
       return availability.canMake;
     });
     
-    // Sort by number of expiring soon ingredients
     availableRecipes.sort((a, b) => {
       const aExpiring = countExpiringSoonIngredients(a);
       const bExpiring = countExpiringSoonIngredients(b);
       return bExpiring - aExpiring;
     });
     
-    // Take top 3 recipes
     const topRecipes = availableRecipes.slice(0, 3);
     
     if (topRecipes.length === 0) {
@@ -965,7 +2825,6 @@
       return;
     }
     
-    // Update subtitle based on expiring items
     const expiringSoonCount = userItems.filter(item => item.status === 'soon').length;
     if (expiringSoonCount > 0) {
       suggestionsSubtitle.textContent = `Make these with your ${expiringSoonCount} expiring item${expiringSoonCount > 1 ? 's' : ''}`;
@@ -973,13 +2832,11 @@
       suggestionsSubtitle.textContent = "Recipes you can make right now";
     }
     
-    // Render suggested recipes
     topRecipes.forEach(recipe => {
       const recipeDiv = document.createElement('div');
       recipeDiv.className = 'recipe';
       recipeDiv.dataset.id = recipe.id;
       
-      // Count expiring soon ingredients in this recipe
       const expiringIngredients = countExpiringSoonIngredients(recipe);
       
       recipeDiv.innerHTML = `
@@ -994,7 +2851,6 @@
         </div>
       `;
       
-      // Handle image loading
       const imgElement = recipeDiv.querySelector('.rimg');
       if (recipe.image && recipe.image.trim() !== '') {
         handleImageLoad(imgElement, recipe.image);
@@ -1002,10 +2858,8 @@
         imgElement.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA2NCA0OCIgZmlsbD0iI2YwZjRmNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48L3N2Zz4=';
       }
       
-      // Add click event to show recipe detail
       recipeDiv.addEventListener('click', () => {
         showRecipeDetail(recipe);
-        // Switch to recipe view
         showView('recipe');
       });
       
@@ -1013,7 +2867,6 @@
     });
   }
   
-  // Helper function to count expiring soon ingredients in a recipe
   function countExpiringSoonIngredients(recipe) {
     let count = 0;
     
@@ -1022,13 +2875,11 @@
     }
     
     recipe.ingredients.forEach(ingredient => {
-      // Find matching user items
       const matchingItems = userItems.filter(item => 
         item.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
         ingredient.name.toLowerCase().includes(item.name.toLowerCase())
       );
       
-      // Check if any matching item is expiring soon
       const hasExpiringSoon = matchingItems.some(item => item.status === 'soon');
       if (hasExpiringSoon) {
         count++;
@@ -1038,63 +2889,50 @@
     return count;
   }
 
-  // Function to handle image loading with multiple fallback methods
+  // Handle image loading
   function handleImageLoad(imgElement, imageUrl) {
-    // Create a white image as fallback
     const whiteImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9IiNmZmZmZmYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PC9zdmc+';
     
-    // If no image URL, use white image immediately
     if (!imageUrl || imageUrl.trim() === '') {
       imgElement.src = whiteImage;
       return;
     }
     
-    // Try to fix common Google Drive URL issues
     let processedUrl = imageUrl;
     
-    // Convert Google Drive view links to direct download links
     if (imageUrl.includes('drive.google.com/file/d/')) {
-      // Format: https://drive.google.com/file/d/FILE_ID/view
       const fileIdMatch = imageUrl.match(/\/d\/([^\/]+)/);
       if (fileIdMatch && fileIdMatch[1]) {
         processedUrl = `https://drive.google.com/uc?id=${fileIdMatch[1]}&export=download`;
       }
     } else if (imageUrl.includes('drive.google.com/open?id=')) {
-      // Format: https://drive.google.com/open?id=FILE_ID
       const fileIdMatch = imageUrl.match(/id=([^&]+)/);
       if (fileIdMatch && fileIdMatch[1]) {
         processedUrl = `https://drive.google.com/uc?id=${fileIdMatch[1]}&export=download`;
       }
     } else if (imageUrl.includes('drive.google.com/uc?export=view&id=')) {
-      // Already in correct format, ensure it has download parameter
       processedUrl = imageUrl.replace('export=view', 'export=download');
     }
     
-    // Set up error handler
     imgElement.onerror = function() {
       console.warn(`Failed to load image from: ${processedUrl}`);
       
-      // Try alternative Google Drive format
       const fileIdMatch = processedUrl.match(/id=([^&]+)/);
       if (fileIdMatch && fileIdMatch[1]) {
         const altUrl = `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}`;
         
-        // Update image source to alternative URL
         this.src = altUrl;
         
-        // Set up another error handler for alternative URL
         this.onerror = function() {
           this.src = whiteImage;
-          this.onerror = null; // Prevent infinite loop
+          this.onerror = null;
         };
       } else {
-        // No file ID found, use white image
         this.src = whiteImage;
         this.onerror = null;
       }
     };
     
-    // Set the image source
     imgElement.src = processedUrl;
   }
 
@@ -1106,17 +2944,12 @@
       currentUser = user;
       console.log('User logged in:', user.uid, user.displayName || user.email);
       
-      // Update user interface
       updateUserInterface(user);
-      
-      // Initialize default recipes (only if collection is empty)
       initializeDefaultRecipes();
-      
-      // Load user items
       loadUserItems();
-      
-      // Load recipes from Firestore
       loadRecipes();
+      loadUserAchievements();
+      checkLoginStreak();
     }
   });
 
@@ -1132,7 +2965,7 @@
     }
   }
 
-  // Load user items from Firestore with real-time updates
+  // Load user items from Firestore
   function loadUserItems() {
     try {
       console.log('Loading items for user:', currentUser.uid);
@@ -1143,7 +2976,6 @@
         orderBy('expiryDate', 'asc')
       );
       
-      // Set up real-time listener
       unsubscribeItems = onSnapshot(q, 
         (snapshot) => {
           console.log('Snapshot received, docs count:', snapshot.size);
@@ -1160,7 +2992,6 @@
           snapshot.forEach((doc) => {
             const data = doc.data();
             
-            // Convert Firestore timestamp to Date
             let expiryDate;
             if (data.expiryDate && data.expiryDate.toDate) {
               expiryDate = data.expiryDate.toDate();
@@ -1171,14 +3002,12 @@
               return;
             }
             
-            // Calculate days until expiry
             const today = new Date();
-            today.setHours(0, 0, 0, 0); // Normalize to start of day
+            today.setHours(0, 0, 0, 0);
             
             const timeDiff = expiryDate.getTime() - today.getTime();
             const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
             
-            // Determine status based on days until expiry
             let status = 'fresh';
             if (daysDiff < 0) status = 'expired';
             else if (daysDiff <= 7) status = 'soon';
@@ -1197,13 +3026,16 @@
             userItems.push(item);
           });
           
-          // Update UI with real data
           updateStats();
           renderHome('expired');
           renderStorage();
           updateHeroMessage();
           updateRecipesAvailability();
           updateSuggestions();
+          updateAchievementsProgress();
+          checkAchievements();
+          generateNotifications(); // Generate notifications when items are loaded
+          renderNotifications();
           
         }, 
         (error) => {
@@ -1231,7 +3063,6 @@
       const recipesRef = collection(db, 'recipes');
       const q = query(recipesRef, orderBy('name'));
       
-      // Set up real-time listener for recipes
       unsubscribeRecipes = onSnapshot(q, 
         (snapshot) => {
           console.log('Recipes snapshot received, docs count:', snapshot.size);
@@ -1244,7 +3075,7 @@
                 <div class="icon">📚</div>
                 <p>No recipes available</p>
                 <p>Add recipes to the database to get started!</p>
-              </div>
+            </div>
             `;
             return;
           }
@@ -1270,6 +3101,8 @@
           console.log('Loaded recipes from Firestore:', recipes.length);
           updateRecipesAvailability();
           updateSuggestions();
+          generateNotifications(); // Regenerate notifications when recipes are loaded
+          renderNotifications();
           
         }, 
         (error) => {
@@ -1303,7 +3136,6 @@
     }
     
     recipe.ingredients.forEach(ingredient => {
-      // Find matching items in user's pantry (case-insensitive partial match)
       const matchingItems = userItems.filter(item => 
         item.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
         ingredient.name.toLowerCase().includes(item.name.toLowerCase())
@@ -1363,7 +3195,6 @@
       };
     });
     
-    // Update the recipes array with availability info
     recipes = updatedRecipes;
     renderRecipes();
   }
@@ -1383,6 +3214,11 @@
       `;
       return;
     }
+    
+    // Update recipes viewed stat
+    updateUserStats({
+      recipes_viewed: (userStats.recipes_viewed || 0) + 1
+    });
     
     recipes.forEach(recipe => {
       const canMake = recipe.availability ? recipe.availability.canMake : false;
@@ -1412,12 +3248,10 @@
         </div>
       `;
       
-      // Handle image loading with fallback
       const imgElement = recipeCard.querySelector('.img');
       if (recipe.image && recipe.image.trim() !== '') {
         handleImageLoad(imgElement, recipe.image);
       } else {
-        // Use white image if no image URL
         imgElement.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9IiNmZmZmZmYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PC9zdmc+';
       }
       
@@ -1526,16 +3360,13 @@
       <div id="cookMessage" style="margin-top:12px;text-align:center;font-size:13px;min-height:20px"></div>
     `;
     
-    // Handle image loading with fallback
     const detailImgElement = recipeDetailContent.querySelector('.recipe-detail-image');
     if (recipe.image && recipe.image.trim() !== '') {
       handleImageLoad(detailImgElement, recipe.image);
     } else {
-      // Use white image if no image URL
       detailImgElement.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9IiNmZmZmZmYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PC9zdmc+';
     }
     
-    // Add event listener to cook button
     const cookBtn = document.getElementById('cookRecipeBtn');
     if (cookBtn) {
       cookBtn.addEventListener('click', () => cookRecipe(recipe));
@@ -1554,6 +3385,7 @@
     
     try {
       const updates = [];
+      let usedExpiringItems = false;
       
       // For each ingredient, deduct from user's items
       for (const ingredient of recipe.ingredients) {
@@ -1570,6 +3402,11 @@
         
         for (const item of matchingItems) {
           if (remainingNeeded <= 0) break;
+          
+          // Check if item is expiring soon
+          if (item.status === 'soon') {
+            usedExpiringItems = true;
+          }
           
           const itemRef = doc(db, 'items', item.id);
           
@@ -1589,20 +3426,35 @@
       // Execute all updates
       await Promise.all(updates);
       
+      // Update user stats
+      const updatesStats = {
+        recipes_cooked: (userStats.recipes_cooked || 0) + 1,
+        items_used: (userStats.items_used || 0) + updates.length,
+        money_saved: (userStats.money_saved || 0) + (recipe.totalCost || 0)
+      };
+      
+      if (usedExpiringItems) {
+        updatesStats.expiring_recipes = (userStats.expiring_recipes || 0) + 1;
+      }
+      
+      await updateUserStats(updatesStats);
+      
       cookMessage.textContent = '✅ Recipe cooked successfully! Ingredients deducted from your pantry.';
       cookMessage.style.color = 'var(--success)';
       cookBtn.textContent = '🍳 Cooked!';
       
-      // Show success message
       setTimeout(() => {
         cookMessage.textContent = '';
         cookBtn.disabled = false;
         cookBtn.textContent = '🍳 Cook This Recipe';
         
-        // Go back to recipe list
         recipeDetailView.style.display = 'none';
         recipeListView.style.display = 'block';
       }, 2000);
+      
+      // Regenerate notifications after cooking
+      generateNotifications();
+      renderNotifications();
       
     } catch (error) {
       console.error('Error cooking recipe:', error);
@@ -1631,7 +3483,6 @@
       </div>
     `;
     
-    // Reset counts
     expiredCountEl.textContent = '0';
     soonCountEl.textContent = '0';
     freshCountEl.textContent = '0';
@@ -1646,12 +3497,10 @@
     const soonCount = userItems.filter(item => item.status === 'soon').length;
     const freshCount = userItems.filter(item => item.status === 'fresh').length;
     
-    // Update stats in the navigation
     expiredCountEl.textContent = expiredCount;
     soonCountEl.textContent = soonCount;
     freshCountEl.textContent = freshCount;
     
-    // Update summary in sidebar
     summaryExpiredEl.textContent = expiredCount;
     summarySoonEl.textContent = soonCount;
     summaryFreshEl.textContent = freshCount;
@@ -1700,7 +3549,6 @@
       `;
       listEl.appendChild(item);
       
-      // Add event listener to check button
       const checkBtn = item.querySelector('.check');
       checkBtn.addEventListener('click', () => {
         handleItemCheck(it.id);
@@ -1747,7 +3595,6 @@
       `;
       storageListEl.appendChild(node);
       
-      // Add event listener to check button
       const checkBtn = node.querySelector('.check');
       checkBtn.addEventListener('click', () => {
         handleItemCheck(it.id);
@@ -1760,7 +3607,18 @@
     if (confirm('Mark this item as used/consumed? This will remove it from your list.')) {
       try {
         await deleteDoc(doc(db, 'items', itemId));
+        
+        // Update user stats
+        await updateUserStats({
+          items_used: (userStats.items_used || 0) + 1
+        });
+        
         console.log('Item removed:', itemId);
+        
+        // Regenerate notifications after item removal
+        generateNotifications();
+        renderNotifications();
+        
       } catch (error) {
         console.error('Error removing item:', error);
         alert('Error removing item. Please try again.');
@@ -1772,16 +3630,25 @@
     document.getElementById('view-home').style.display = view === 'home' ? '' : 'none';
     document.getElementById('view-storage').style.display = view === 'storage' ? '' : 'none';
     document.getElementById('view-recipe').style.display = view === 'recipe' ? '' : 'none';
+    document.getElementById('view-reward').style.display = view === 'reward' ? '' : 'none';
+    document.getElementById('view-notification').style.display = view === 'notification' ? '' : 'none';
     navButtons.forEach(b => b.classList.toggle('active', b.id === `nav-${view}`));
     
-    // Reset recipe views
     if (view === 'recipe') {
       recipeListView.style.display = 'block';
       recipeDetailView.style.display = 'none';
       updateRecipesAvailability();
     } else if (view === 'storage') {
       storageSearch.focus();
-      renderStorage(); // Refresh storage view when switching to it
+      renderStorage();
+    } else if (view === 'reward') {
+      updateRewardsStats();
+      updateRecentAchievements();
+      updateLevelDisplay();
+    } else if (view === 'notification') {
+      // Generate fresh notifications when viewing notification page
+      generateNotifications();
+      renderNotifications();
     }
   }
 
@@ -1812,12 +3679,19 @@
       
       console.log('Item added with ID:', docRef.id);
       
+      // Update user stats and check streaks
+      await checkAddStreak(itemData.name);
+      
       formMessage.textContent = 'Item added successfully!';
       formMessage.className = 'form-message success';
       
       setTimeout(() => {
         closeAddItemModal();
       }, 1500);
+      
+      // Regenerate notifications after adding item
+      generateNotifications();
+      renderNotifications();
       
       return true;
     } catch (error) {
@@ -1877,7 +3751,6 @@
         return;
       }
       
-      // Show loading state
       saveItemBtn.disabled = true;
       saveItemBtn.textContent = 'Adding...';
       formMessage.textContent = '';
@@ -1901,11 +3774,42 @@
       }
     });
 
+    // Toast close button
+    toastClose.addEventListener('click', () => {
+      achievementToast.classList.remove('show');
+    });
+
     // Recipe navigation
     recipeBack.addEventListener('click', () => showView('home'));
     recipeDetailBack.addEventListener('click', () => {
       recipeDetailView.style.display = 'none';
       recipeListView.style.display = 'block';
+    });
+
+    // Notification filter buttons
+    notificationFilters.addEventListener('click', (e) => {
+      if (e.target.classList.contains('notification-filter')) {
+        // Remove active class from all filters
+        document.querySelectorAll('.notification-filter').forEach(filter => {
+          filter.classList.remove('active');
+        });
+        
+        // Add active class to clicked filter
+        e.target.classList.add('active');
+        activeNotificationFilter = e.target.dataset.filter;
+        
+        // Re-render notifications with new filter
+        renderNotifications();
+      }
+    });
+
+    // Notification bell button - show notification view
+    btnBell.addEventListener('click', () => {
+      showView('notification');
+      // Mark all notifications as read when viewing
+      notifications.forEach(n => n.unread = false);
+      updateNotificationBadge();
+      renderNotifications();
     });
 
     // Existing Event Listeners
@@ -1939,21 +3843,11 @@
         if (btn.id === 'nav-home') showView('home');
         else if (btn.id === 'nav-storage') showView('storage');
         else if (btn.id === 'nav-recipe') showView('recipe');
-        else if (btn.id === 'nav-reward') alert('Rewards feature coming soon!');
+        else if (btn.id === 'nav-reward') showView('reward');
       });
     });
 
-    btnBell.addEventListener('click', () => {
-      const expiredCount = userItems.filter(item => item.status === 'expired').length;
-      if (expiredCount > 0) {
-        alert(`You have ${expiredCount} expired item${expiredCount > 1 ? 's' : ''}. Check your expired items list.`);
-      } else {
-        alert('No notifications. All your items are fresh!');
-      }
-    });
-
     btnLogout.addEventListener('click', () => {
-      // Unsubscribe from real-time updates before logging out
       if (unsubscribeItems) {
         unsubscribeItems();
       }
