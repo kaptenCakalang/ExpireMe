@@ -781,7 +781,7 @@
     {
       id: 'recipe1',
       name: 'Creamy Pancakes',
-      image: 'https://drive.google.com/uc?export=view&id=1fz24lpxjskFXj6KD9jRxyTNAFwNbVJCy',
+      image: 'https://drive.google.com/uc?export=view&id=1fTaOqnBdwkx0-cpy78uzmhmRXDkEUOuQ',
       description: 'Fluffy pancakes with a creamy twist',
       prepTime: '15 min',
       cookTime: '20 min',
@@ -809,7 +809,7 @@
     {
       id: 'recipe2',
       name: 'Berry Smoothie',
-      image: 'https://drive.google.google/uc?export=view&id=1YOUR_DRIVE_FILE_ID_2',
+      image: 'https://drive.google.google/uc?export=view&id=1fTaOqnBdwkx0-cpy78uzmhmRXDkEUOuQ',
       description: 'Refreshing berry smoothie packed with nutrients',
       prepTime: '5 min',
       cookTime: '0 min',
@@ -835,7 +835,7 @@
     {
       id: 'recipe3',
       name: 'Vegetable Stir Fry',
-      image: 'https://drive.googlegoogle.com/uc?export=view&id=1YOUR_DRIVE_FILE_ID_3',
+      image: 'https://drive.googlegoogle.com/uc?export=view&id=1fTaOqnBdwkx0-cpy78uzmhmRXDkEUOuQ',
       description: 'Quick and healthy vegetable stir fry',
       prepTime: '10 min',
       cookTime: '15 min',
@@ -865,7 +865,7 @@
     {
       id: 'recipe4',
       name: 'Chicken Pasta',
-      image: 'https://drive.google.google/uc?export=view&id=1YOUR_DRIVE_FILE_ID_4',
+      image: 'https://drive.google.google/uc?export=view&id=1fTaOqnBdwkx0-cpy78uzmhmRXDkEUOuQ',
       description: 'Creamy chicken pasta with herbs',
       prepTime: '15 min',
       cookTime: '25 min',
@@ -908,75 +908,202 @@
   itemExpiry.min = today;
 
   // Function to upload default recipes to Firestore
+// Function to check and add missing default recipes every time
   async function initializeDefaultRecipes() {
     try {
-      console.log('Checking for existing recipes in Firestore...');
+      console.log('Checking for default recipes in Firestore...');
+      
+      // Get all existing recipes
       const recipesRef = collection(db, 'recipes');
       const querySnapshot = await getDocs(recipesRef);
       
-      console.log('Number of existing recipes:', querySnapshot.size);
+      // Create a map of existing recipe IDs for quick lookup
+      const existingRecipeIds = new Set();
+      querySnapshot.forEach(doc => {
+        existingRecipeIds.add(doc.id);
+      });
       
-      if (querySnapshot.size === 0) {
-        console.log('No recipes found in Firestore. Adding default recipes...');
-        
-        for (const recipe of defaultRecipes) {
+      console.log('Existing recipe IDs:', Array.from(existingRecipeIds));
+      
+      // Track which recipes were added
+      const addedRecipes = [];
+      const skippedRecipes = [];
+      
+      // Check each default recipe
+      for (const recipe of defaultRecipes) {
+        if (!existingRecipeIds.has(recipe.id)) {
           try {
             // Create a document reference with the specified ID
             const recipeRef = doc(db, 'recipes', recipe.id);
             
-            // Create recipe data without the id field
-            const recipeData = {
-              name: recipe.name,
-              image: recipe.image,
-              description: recipe.description,
-              prepTime: recipe.prepTime,
-              cookTime: recipe.cookTime,
-              difficulty: recipe.difficulty,
-              servings: recipe.servings,
-              ingredients: recipe.ingredients,
-              instructions: recipe.instructions,
-              totalCost: recipe.totalCost,
+            // Prepare recipe data without the id field
+            const { id, ...recipeData } = recipe;
+            
+            await setDoc(recipeRef, {
+              ...recipeData,
               createdAt: serverTimestamp()
-            };
+            });
             
-            // Check if recipe already exists
-            const recipeDoc = await getDoc(recipeRef);
-            
-            if (!recipeDoc.exists()) {
-              await setDoc(recipeRef, recipeData);
-              console.log(`✓ Added recipe: ${recipe.name} (ID: ${recipe.id})`);
-            } else {
-              console.log(`⚠ Recipe ${recipe.name} already exists, skipping...`);
-            }
+            addedRecipes.push(recipe.name);
+            console.log(`✓ Added missing recipe: ${recipe.name} (ID: ${recipe.id})`);
           } catch (recipeError) {
             console.error(`Error adding recipe ${recipe.name}:`, recipeError);
           }
+        } else {
+          skippedRecipes.push(recipe.name);
+          console.log(`✓ Recipe already exists: ${recipe.name}`);
         }
-        
-        console.log('Default recipes initialization completed!');
-      } else {
-        console.log('Recipes already exist in Firestore. Skipping initialization.');
       }
+      
+      // Log results
+      if (addedRecipes.length > 0) {
+        console.log(`✅ Added ${addedRecipes.length} missing recipes:`, addedRecipes);
+        
+        // Show a subtle notification (optional)
+        showNotification(`Added ${addedRecipes.length} new recipes!`, 'success');
+      } else {
+        console.log('✅ All default recipes are already in the database.');
+      }
+      
     } catch (error) {
-      console.error('Error initializing default recipes:', error);
-      console.error('Error details:', error.code, error.message);
+      console.error('Error checking default recipes:', error);
+      
+      // If there's a permission error, suggest checking Firestore rules
+      if (error.code === 'permission-denied') {
+        console.error('PERMISSION DENIED: Please check your Firestore security rules.');
+        showNotification('Permission denied when checking recipes.', 'error');
+      }
     }
   }
 
-  // Function to handle image loading with fallback
+  // Optional: Function to show notifications
+  function showNotification(message, type = 'info') {
+    // Create a simple notification element
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      animation: slideIn 0.3s ease;
+    `;
+    
+    if (type === 'success') {
+      notification.style.backgroundColor = 'var(--success)';
+    } else if (type === 'error') {
+      notification.style.backgroundColor = 'var(--danger)';
+    } else {
+      notification.style.backgroundColor = 'var(--accent)';
+    }
+    
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 300);
+    }, 3000);
+  }
+
+  // Add CSS animation for notifications
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Function to handle image loading with multiple fallback methods
   function handleImageLoad(imgElement, imageUrl) {
-    // Create a white image as fallback (SVG)
+    // Create a white image as fallback
     const whiteImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9IiNmZmZmZmYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PC9zdmc+';
+    
+    // If no image URL, use white image immediately
+    if (!imageUrl || imageUrl.trim() === '') {
+      imgElement.src = whiteImage;
+      return;
+    }
+    
+    // Try to fix common Google Drive URL issues
+    let processedUrl = imageUrl;
+    
+    // Convert Google Drive view links to direct download links
+    if (imageUrl.includes('drive.google.com/file/d/')) {
+      // Format: https://drive.google.com/file/d/FILE_ID/view
+      const fileIdMatch = imageUrl.match(/\/d\/([^\/]+)/);
+      if (fileIdMatch && fileIdMatch[1]) {
+        processedUrl = `https://drive.google.com/uc?id=${fileIdMatch[1]}&export=download`;
+      }
+    } else if (imageUrl.includes('drive.google.com/open?id=')) {
+      // Format: https://drive.google.com/open?id=FILE_ID
+      const fileIdMatch = imageUrl.match(/id=([^&]+)/);
+      if (fileIdMatch && fileIdMatch[1]) {
+        processedUrl = `https://drive.google.com/uc?id=${fileIdMatch[1]}&export=download`;
+      }
+    } else if (imageUrl.includes('drive.google.com/uc?export=view&id=')) {
+      // Already in correct format, ensure it has download parameter
+      processedUrl = imageUrl.replace('export=view', 'export=download');
+    }
+    
+    console.log(`Loading image from: ${processedUrl}`);
     
     // Set up error handler
     imgElement.onerror = function() {
-      console.warn(`Failed to load image: ${imageUrl}. Using fallback.`);
-      this.src = whiteImage;
-      this.onerror = null; // Prevent infinite loop if fallback also fails
+      console.warn(`Failed to load image from: ${processedUrl}`);
+      
+      // Try alternative Google Drive format
+      const fileIdMatch = processedUrl.match(/id=([^&]+)/);
+      if (fileIdMatch && fileIdMatch[1]) {
+        const altUrl = `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}`;
+        console.log(`Trying alternative URL: ${altUrl}`);
+        
+        // Update image source to alternative URL
+        this.src = altUrl;
+        
+        // Set up another error handler for alternative URL
+        this.onerror = function() {
+          console.warn(`Alternative URL also failed. Using fallback image.`);
+          this.src = whiteImage;
+          this.onerror = null; // Prevent infinite loop
+        };
+      } else {
+        // No file ID found, use white image
+        this.src = whiteImage;
+        this.onerror = null;
+      }
     };
     
     // Set the image source
-    imgElement.src = imageUrl;
+    imgElement.src = processedUrl;
   }
 
   // Auth Check
