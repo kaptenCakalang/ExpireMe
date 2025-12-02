@@ -51,7 +51,8 @@
     .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:var(--shadow)}
     .small-title{font-size:13px;color:var(--muted);margin-bottom:8px}
     .recipe-grid{display:flex;flex-direction:column;gap:8px}
-    .recipe{display:flex;gap:10px;align-items:center}
+    .recipe{display:flex;gap:10px;align-items:center;cursor:pointer;padding:8px;border-radius:8px;transition:background-color 0.2s}
+    .recipe:hover{background-color:#f8fafb}
     .recipe .rimg{width:64px;height:48px;border-radius:8px;background:#f0f4f5;display:block;object-fit:cover}
     .search{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border-radius:999px;box-shadow:var(--shadow);margin:12px 0}
     .search input{border:0;outline:0;width:100%;font-size:14px;background:transparent}
@@ -447,6 +448,32 @@
       cursor: not-allowed;
     }
     
+    /* Food status indicators */
+    .food-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .status-fresh {
+      background: rgba(15,81,50,0.1);
+      color: var(--success);
+    }
+    
+    .status-soon {
+      background: rgba(255,171,0,0.1);
+      color: #ff8c00;
+    }
+    
+    .status-expired {
+      background: rgba(217,83,79,0.1);
+      color: var(--danger);
+    }
+    
     @media (max-width:1000px){
       .wrap{padding:12px;flex-direction:column}
       .sidebar{width:100%}
@@ -489,11 +516,7 @@
             <h2 id="heroTitle">Manage Your Food Items</h2>
             <p id="heroSubtitle">Add items to track their expiry dates</p>
           </div>
-          <div class="thumbs" aria-hidden="true">
-            <div class="thumb"><img src="https://images.unsplash.com/photo-1516100882582-96c3a05fe590?w=800&q=60&auto=format&fit=crop" alt=""></div>
-            <div class="thumb"><img src="https://images.unsplash.com/photo-1505765052448-9b5a8f1d1f9b?w=800&q=60&auto=format&fit=crop" alt=""></div>
-            <div class="thumb"><img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?w=800&q=60&auto=format&fit=crop" alt=""></div>
-          </div>
+          <!-- Removed placeholder images -->
         </section>
 
         <section class="section-title" aria-labelledby="title-check">
@@ -594,19 +617,21 @@
         </div>
       </div>
 
+      <!-- Dynamic Suggestions Card -->
       <div class="card">
         <div class="small-title">Suggestions</div>
-        <div style="font-size:14px;margin-bottom:8px">Try these recipes with items that are expiring soon</div>
-        <div class="recipe-grid">
-          <div class="recipe"><img class="rimg" src="https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800&q=60&auto=format&fit=crop" alt=""> <div><div style="font-weight:600">Creamy Pancakes</div><div style="font-size:12px;color:var(--muted)">Milk · Eggs</div></div></div>
-          <div class="recipe"><img class="rimg" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=60&auto=format&fit=crop" alt=""> <div><div style="font-weight:600">Berry Smoothie</div><div style="font-size:12px;color:var(--muted)">Yogurt · Milk</div></div></div>
+        <div style="font-size:14px;margin-bottom:8px" id="suggestionsSubtitle">Try these recipes with items that are expiring soon</div>
+        <div class="recipe-grid" id="suggestions-list">
+          <!-- Dynamic content will be inserted here -->
+          <div class="empty-state" style="padding:20px 0;min-height:auto">
+            <div class="icon">🍳</div>
+            <p>No recipes to suggest yet</p>
+            <p style="font-size:12px">Add more items to get personalized suggestions</p>
+          </div>
         </div>
       </div>
 
-      <div class="card" style="text-align:center">
-        <div class="small-title">Quick Actions</div>
-        <button style="background:var(--accent);color:#fff;border:0;padding:10px 14px;border-radius:10px;cursor:pointer" id="scanItemBtn">Scan Item</button>
-      </div>
+      <!-- Removed Scan Item Card -->
     </aside>
   </div>
 
@@ -753,9 +778,10 @@
   const summaryFreshEl = document.getElementById('summaryFresh');
   const heroTitle = document.getElementById('heroTitle');
   const heroSubtitle = document.getElementById('heroSubtitle');
-  const scanItemBtn = document.getElementById('scanItemBtn');
   const recipeBack = document.getElementById('recipe-back');
   const recipeDetailBack = document.getElementById('recipe-detail-back');
+  const suggestionsList = document.getElementById('suggestions-list');
+  const suggestionsSubtitle = document.getElementById('suggestionsSubtitle');
   
   // Add Item Modal Elements
   const addItemModal = document.getElementById('addItemModal');
@@ -776,124 +802,6 @@
   let currentRecipeDetail = null;
   let unsubscribeRecipes = null;
 
-  // Default recipes to upload to Firestore if none exist
-  const defaultRecipes = [
-    {
-      id: 'recipe1',
-      name: 'Creamy Pancakes',
-      image: 'https://drive.google.com/uc?export=view&id=1fTaOqnBdwkx0-cpy78uzmhmRXDkEUOuQ',
-      description: 'Fluffy pancakes with a creamy twist',
-      prepTime: '15 min',
-      cookTime: '20 min',
-      difficulty: 'Easy',
-      servings: 4,
-      ingredients: [
-        { name: 'flour', quantity: 2, unit: 'cups', cost: 0.50 },
-        { name: 'milk', quantity: 1.5, unit: 'cups', cost: 0.75 },
-        { name: 'eggs', quantity: 2, unit: 'pieces', cost: 0.60 },
-        { name: 'butter', quantity: 2, unit: 'tablespoons', cost: 0.40 },
-        { name: 'sugar', quantity: 2, unit: 'tablespoons', cost: 0.20 },
-        { name: 'baking powder', quantity: 2, unit: 'teaspoons', cost: 0.10 }
-      ],
-      instructions: [
-        'Mix flour, sugar, and baking powder in a bowl',
-        'In another bowl, whisk milk, eggs, and melted butter',
-        'Combine wet and dry ingredients, mix until smooth',
-        'Heat a non-stick pan over medium heat',
-        'Pour 1/4 cup batter for each pancake',
-        'Cook until bubbles form, then flip and cook until golden',
-        'Serve with syrup or fresh fruits'
-      ],
-      totalCost: 2.55
-    },
-    {
-      id: 'recipe2',
-      name: 'Berry Smoothie',
-      image: 'https://drive.google.google/uc?export=view&id=1fTaOqnBdwkx0-cpy78uzmhmRXDkEUOuQ',
-      description: 'Refreshing berry smoothie packed with nutrients',
-      prepTime: '5 min',
-      cookTime: '0 min',
-      difficulty: 'Very Easy',
-      servings: 2,
-      ingredients: [
-        { name: 'yogurt', quantity: 1, unit: 'cup', cost: 1.00 },
-        { name: 'mixed berries', quantity: 1, unit: 'cup', cost: 1.50 },
-        { name: 'milk', quantity: 1, unit: 'cup', cost: 0.50 },
-        { name: 'honey', quantity: 1, unit: 'tablespoon', cost: 0.30 },
-        { name: 'banana', quantity: 1, unit: 'piece', cost: 0.40 }
-      ],
-      instructions: [
-        'Peel and slice the banana',
-        'Add all ingredients to a blender',
-        'Blend until smooth and creamy',
-        'If too thick, add more milk',
-        'Pour into glasses and serve immediately',
-        'Garnish with fresh berries if desired'
-      ],
-      totalCost: 3.70
-    },
-    {
-      id: 'recipe3',
-      name: 'Vegetable Stir Fry',
-      image: 'https://drive.googlegoogle.com/uc?export=view&id=1fTaOqnBdwkx0-cpy78uzmhmRXDkEUOuQ',
-      description: 'Quick and healthy vegetable stir fry',
-      prepTime: '10 min',
-      cookTime: '15 min',
-      difficulty: 'Easy',
-      servings: 3,
-      ingredients: [
-        { name: 'broccoli', quantity: 2, unit: 'cups', cost: 1.20 },
-        { name: 'carrot', quantity: 2, unit: 'pieces', cost: 0.60 },
-        { name: 'bell pepper', quantity: 1, unit: 'piece', cost: 0.80 },
-        { name: 'soy sauce', quantity: 3, unit: 'tablespoons', cost: 0.45 },
-        { name: 'garlic', quantity: 2, unit: 'cloves', cost: 0.20 },
-        { name: 'ginger', quantity: 1, unit: 'tablespoon', cost: 0.15 },
-        { name: 'onion', quantity: 1, unit: 'piece', cost: 0.40 }
-      ],
-      instructions: [
-        'Chop all vegetables into bite-sized pieces',
-        'Heat oil in a wok or large pan',
-        'Add garlic and ginger, sauté for 1 minute',
-        'Add onions and cook until translucent',
-        'Add carrots and broccoli, stir fry for 5 minutes',
-        'Add bell peppers and cook for 3 more minutes',
-        'Add soy sauce and stir well',
-        'Cook for 2 more minutes and serve hot'
-      ],
-      totalCost: 3.80
-    },
-    {
-      id: 'recipe4',
-      name: 'Chicken Pasta',
-      image: 'https://drive.google.google/uc?export=view&id=1fTaOqnBdwkx0-cpy78uzmhmRXDkEUOuQ',
-      description: 'Creamy chicken pasta with herbs',
-      prepTime: '15 min',
-      cookTime: '25 min',
-      difficulty: 'Medium',
-      servings: 4,
-      ingredients: [
-        { name: 'pasta', quantity: 250, unit: 'grams', cost: 1.50 },
-        { name: 'chicken breast', quantity: 2, unit: 'pieces', cost: 4.00 },
-        { name: 'cream', quantity: 1, unit: 'cup', cost: 1.20 },
-        { name: 'parmesan cheese', quantity: 0.5, unit: 'cup', cost: 1.50 },
-        { name: 'garlic', quantity: 3, unit: 'cloves', cost: 0.30 },
-        { name: 'herbs', quantity: 2, unit: 'tablespoons', cost: 0.40 },
-        { name: 'butter', quantity: 2, unit: 'tablespoons', cost: 0.40 }
-      ],
-      instructions: [
-        'Cook pasta according to package instructions',
-        'Dice chicken breast into bite-sized pieces',
-        'Heat butter in a pan, add garlic',
-        'Add chicken and cook until golden',
-        'Pour in cream and bring to simmer',
-        'Add parmesan cheese and stir until melted',
-        'Add cooked pasta to the sauce',
-        'Mix well, garnish with herbs and serve'
-      ],
-      totalCost: 9.30
-    }
-  ];
-
   // Set current date
   function updateCurrentDate() {
     const now = new Date();
@@ -907,8 +815,7 @@
   const today = new Date().toISOString().split('T')[0];
   itemExpiry.min = today;
 
-  // Function to upload default recipes to Firestore
-// Function to check and add missing default recipes every time
+  // Function to check and add missing default recipes every time
   async function initializeDefaultRecipes() {
     try {
       console.log('Checking for default recipes in Firestore...');
@@ -958,89 +865,178 @@
       // Log results
       if (addedRecipes.length > 0) {
         console.log(`✅ Added ${addedRecipes.length} missing recipes:`, addedRecipes);
-        
-        // Show a subtle notification (optional)
-        showNotification(`Added ${addedRecipes.length} new recipes!`, 'success');
       } else {
         console.log('✅ All default recipes are already in the database.');
       }
       
     } catch (error) {
       console.error('Error checking default recipes:', error);
-      
-      // If there's a permission error, suggest checking Firestore rules
-      if (error.code === 'permission-denied') {
-        console.error('PERMISSION DENIED: Please check your Firestore security rules.');
-        showNotification('Permission denied when checking recipes.', 'error');
-      }
     }
   }
 
-  // Optional: Function to show notifications
-  function showNotification(message, type = 'info') {
-    // Create a simple notification element
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      color: white;
-      font-weight: 600;
-      z-index: 1000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      animation: slideIn 0.3s ease;
-    `;
-    
-    if (type === 'success') {
-      notification.style.backgroundColor = 'var(--success)';
-    } else if (type === 'error') {
-      notification.style.backgroundColor = 'var(--danger)';
-    } else {
-      notification.style.backgroundColor = 'var(--accent)';
+  // Update hero message based on items - IMPROVED VERSION
+  function updateHeroMessage() {
+    if (userItems.length === 0) {
+      heroTitle.textContent = "Welcome to ExpireMe!";
+      heroSubtitle.textContent = "Add your first item to start tracking expiry dates";
+      return;
     }
-    
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-      notification.style.animation = 'slideOut 0.3s ease';
-      setTimeout(() => {
-        if (notification.parentNode) {
-          notification.parentNode.removeChild(notification);
+
+    const totalItems = userItems.length;
+    const expired = userItems.filter(item => item.status === 'expired').length;
+    const soon = userItems.filter(item => item.status === 'soon').length;
+    const fresh = userItems.filter(item => item.status === 'fresh').length;
+
+    // Calculate days until next expiry
+    const upcomingItems = userItems.filter(item => item.days >= 0);
+    let nextExpiryDays = null;
+    if (upcomingItems.length > 0) {
+      nextExpiryDays = Math.min(...upcomingItems.map(item => item.days));
+    }
+
+    // Generate dynamic messages
+    if (expired > 0) {
+      heroTitle.textContent = `⚠️ You have ${expired} expired item${expired > 1 ? 's' : ''}!`;
+      heroSubtitle.textContent = "Check your expired items list and consider disposal";
+    } else if (soon > 0) {
+      heroTitle.textContent = `⏰ ${soon} item${soon > 1 ? 's' : ''} expiring soon`;
+      heroSubtitle.textContent = `Use them within ${Math.min(...userItems.filter(i => i.status === 'soon').map(i => i.days))} days`;
+    } else if (fresh > 0) {
+      if (nextExpiryDays !== null) {
+        heroTitle.textContent = `✅ All ${fresh} items are fresh!`;
+        if (nextExpiryDays === 0) {
+          heroSubtitle.textContent = "1 item expires today - use it now!";
+        } else if (nextExpiryDays <= 3) {
+          heroSubtitle.textContent = `Next expiry in ${nextExpiryDays} day${nextExpiryDays !== 1 ? 's' : ''}`;
+        } else {
+          heroSubtitle.textContent = `Next expiry in ${nextExpiryDays} days - you're doing great!`;
         }
-      }, 300);
-    }, 3000);
+      } else {
+        heroTitle.textContent = `🍎 ${fresh} fresh items in your pantry`;
+        heroSubtitle.textContent = "All items are fresh and ready to use";
+      }
+    }
   }
 
-  // Add CSS animation for notifications
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes slideIn {
-      from {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
+  // Update suggestions sidebar with recipes that can be made
+  function updateSuggestions() {
+    console.log('Updating suggestions...');
+    
+    // Clear current suggestions
+    suggestionsList.innerHTML = '';
+    
+    if (userItems.length === 0) {
+      suggestionsList.innerHTML = `
+        <div class="empty-state" style="padding:20px 0;min-height:auto">
+          <div class="icon">📦</div>
+          <p>No items in your pantry</p>
+          <p style="font-size:12px">Add items to get recipe suggestions</p>
+        </div>
+      `;
+      suggestionsSubtitle.textContent = "Add items to get personalized recipe suggestions";
+      return;
     }
     
-    @keyframes slideOut {
-      from {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      to {
-        transform: translateX(100%);
-        opacity: 0;
-      }
+    // Get recipes that can be made with available ingredients
+    const availableRecipes = recipes.filter(recipe => {
+      const availability = checkRecipeAvailability(recipe);
+      return availability.canMake;
+    });
+    
+    // Sort by number of expiring soon ingredients
+    availableRecipes.sort((a, b) => {
+      const aExpiring = countExpiringSoonIngredients(a);
+      const bExpiring = countExpiringSoonIngredients(b);
+      return bExpiring - aExpiring;
+    });
+    
+    // Take top 3 recipes
+    const topRecipes = availableRecipes.slice(0, 3);
+    
+    if (topRecipes.length === 0) {
+      suggestionsList.innerHTML = `
+        <div class="empty-state" style="padding:20px 0;min-height:auto">
+          <div class="icon">🍳</div>
+          <p>No recipes available yet</p>
+          <p style="font-size:12px">Add more ingredients to unlock recipes</p>
+        </div>
+      `;
+      suggestionsSubtitle.textContent = "Add more ingredients to unlock recipe suggestions";
+      return;
     }
-  `;
-  document.head.appendChild(style);
+    
+    // Update subtitle based on expiring items
+    const expiringSoonCount = userItems.filter(item => item.status === 'soon').length;
+    if (expiringSoonCount > 0) {
+      suggestionsSubtitle.textContent = `Make these with your ${expiringSoonCount} expiring item${expiringSoonCount > 1 ? 's' : ''}`;
+    } else {
+      suggestionsSubtitle.textContent = "Recipes you can make right now";
+    }
+    
+    // Render suggested recipes
+    topRecipes.forEach(recipe => {
+      const recipeDiv = document.createElement('div');
+      recipeDiv.className = 'recipe';
+      recipeDiv.dataset.id = recipe.id;
+      
+      // Count expiring soon ingredients in this recipe
+      const expiringIngredients = countExpiringSoonIngredients(recipe);
+      
+      recipeDiv.innerHTML = `
+        <img class="rimg" src="" alt="${recipe.name}" loading="lazy">
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:14px">${recipe.name}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">${recipe.prepTime} • ${recipe.servings} servings</div>
+          ${expiringIngredients > 0 ? 
+            `<div style="font-size:11px;color:#ff8c00;margin-top:4px">Uses ${expiringIngredients} expiring ingredient${expiringIngredients > 1 ? 's' : ''}</div>` : 
+            `<div style="font-size:11px;color:var(--success);margin-top:4px">All ingredients fresh</div>`
+          }
+        </div>
+      `;
+      
+      // Handle image loading
+      const imgElement = recipeDiv.querySelector('.rimg');
+      if (recipe.image && recipe.image.trim() !== '') {
+        handleImageLoad(imgElement, recipe.image);
+      } else {
+        imgElement.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA2NCA0OCIgZmlsbD0iI2YwZjRmNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48L3N2Zz4=';
+      }
+      
+      // Add click event to show recipe detail
+      recipeDiv.addEventListener('click', () => {
+        showRecipeDetail(recipe);
+        // Switch to recipe view
+        showView('recipe');
+      });
+      
+      suggestionsList.appendChild(recipeDiv);
+    });
+  }
+  
+  // Helper function to count expiring soon ingredients in a recipe
+  function countExpiringSoonIngredients(recipe) {
+    let count = 0;
+    
+    if (!recipe.ingredients || !Array.isArray(recipe.ingredients)) {
+      return 0;
+    }
+    
+    recipe.ingredients.forEach(ingredient => {
+      // Find matching user items
+      const matchingItems = userItems.filter(item => 
+        item.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
+        ingredient.name.toLowerCase().includes(item.name.toLowerCase())
+      );
+      
+      // Check if any matching item is expiring soon
+      const hasExpiringSoon = matchingItems.some(item => item.status === 'soon');
+      if (hasExpiringSoon) {
+        count++;
+      }
+    });
+    
+    return count;
+  }
 
   // Function to handle image loading with multiple fallback methods
   function handleImageLoad(imgElement, imageUrl) {
@@ -1074,8 +1070,6 @@
       processedUrl = imageUrl.replace('export=view', 'export=download');
     }
     
-    console.log(`Loading image from: ${processedUrl}`);
-    
     // Set up error handler
     imgElement.onerror = function() {
       console.warn(`Failed to load image from: ${processedUrl}`);
@@ -1084,14 +1078,12 @@
       const fileIdMatch = processedUrl.match(/id=([^&]+)/);
       if (fileIdMatch && fileIdMatch[1]) {
         const altUrl = `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}`;
-        console.log(`Trying alternative URL: ${altUrl}`);
         
         // Update image source to alternative URL
         this.src = altUrl;
         
         // Set up another error handler for alternative URL
         this.onerror = function() {
-          console.warn(`Alternative URL also failed. Using fallback image.`);
           this.src = whiteImage;
           this.onerror = null; // Prevent infinite loop
         };
@@ -1161,12 +1153,12 @@
             console.log('No items found for user');
             showEmptyState();
             updateRecipesAvailability();
+            updateSuggestions();
             return;
           }
           
           snapshot.forEach((doc) => {
             const data = doc.data();
-            console.log('Processing item:', doc.id, data);
             
             // Convert Firestore timestamp to Date
             let expiryDate;
@@ -1205,28 +1197,24 @@
             userItems.push(item);
           });
           
-          console.log('Loaded items:', userItems);
-          
           // Update UI with real data
           updateStats();
           renderHome('expired');
           renderStorage();
           updateHeroMessage();
           updateRecipesAvailability();
+          updateSuggestions();
           
         }, 
         (error) => {
           console.error('Error in onSnapshot:', error);
-          console.error('Error details:', error.code, error.message);
           showEmptyState();
           
-          // Show error message to user
           listEl.innerHTML = `
             <div class="empty-state">
               <div class="icon">❌</div>
               <p>Error loading items</p>
               <p>Please check console for details</p>
-              <p style="font-size:12px">${error.message}</p>
             </div>
           `;
         }
@@ -1281,6 +1269,7 @@
           
           console.log('Loaded recipes from Firestore:', recipes.length);
           updateRecipesAvailability();
+          updateSuggestions();
           
         }, 
         (error) => {
@@ -1290,7 +1279,6 @@
               <div class="icon">❌</div>
               <p>Error loading recipes</p>
               <p>Please check console for details</p>
-              <p style="font-size:12px">${error.message}</p>
             </div>
           `;
         }
@@ -1611,9 +1599,6 @@
         cookBtn.disabled = false;
         cookBtn.textContent = '🍳 Cook This Recipe';
         
-        // Show recipe completion modal
-        alert(`🎉 Recipe completed!\n\nYou cooked "${recipe.name}" successfully!\nTotal cost: $${recipe.totalCost ? recipe.totalCost.toFixed(2) : '0.00'}\n\nIngredients have been deducted from your pantry.`);
-        
         // Go back to recipe list
         recipeDetailView.style.display = 'none';
         recipeListView.style.display = 'block';
@@ -1655,35 +1640,11 @@
     summaryFreshEl.textContent = '0';
   }
 
-  // Update hero message based on items
-  function updateHeroMessage() {
-    if (userItems.length === 0) {
-      heroTitle.textContent = "Welcome to ExpireMe!";
-      heroSubtitle.textContent = "Add your first item to start tracking expiry dates";
-    } else {
-      const expiringSoon = userItems.filter(item => item.status === 'soon').length;
-      const expired = userItems.filter(item => item.status === 'expired').length;
-      
-      if (expired > 0) {
-        heroTitle.textContent = `You have ${expired} expired item${expired > 1 ? 's' : ''}!`;
-        heroSubtitle.textContent = "Check your expired items and consider disposing them";
-      } else if (expiringSoon > 0) {
-        heroTitle.textContent = `You have ${expiringSoon} item${expiringSoon > 1 ? 's' : ''} expiring soon!`;
-        heroSubtitle.textContent = "Check recipes for suggestions to use them";
-      } else {
-        heroTitle.textContent = "All your items are fresh!";
-        heroSubtitle.textContent = "Keep up the good food management";
-      }
-    }
-  }
-
   // Update stats based on user items
   function updateStats() {
     const expiredCount = userItems.filter(item => item.status === 'expired').length;
     const soonCount = userItems.filter(item => item.status === 'soon').length;
     const freshCount = userItems.filter(item => item.status === 'fresh').length;
-    
-    console.log('Updating stats - Expired:', expiredCount, 'Soon:', soonCount, 'Fresh:', freshCount);
     
     // Update stats in the navigation
     expiredCountEl.textContent = expiredCount;
@@ -1698,7 +1659,6 @@
 
   // Render Functions
   function renderHome(filter='expired') {
-    console.log('Rendering home with filter:', filter, 'Items:', userItems);
     listEl.innerHTML = '';
     const filtered = userItems.filter(i => filter === 'all' ? true : i.status === filter);
     
@@ -1749,7 +1709,6 @@
   }
 
   function renderStorage(location = storageActiveLoc, searchQuery = '') {
-    console.log('Rendering storage:', location, 'Search:', searchQuery, 'Items:', userItems);
     storageListEl.innerHTML = '';
     const filtered = userItems.filter(i => 
       i.location === location && 
@@ -1863,8 +1822,6 @@
       return true;
     } catch (error) {
       console.error('Error adding item:', error);
-      console.error('Error code:', error.code);
-      console.error('Error message:', error.message);
       
       let errorMessage = 'Error adding item. Please try again.';
       
@@ -2006,10 +1963,6 @@
       signOut(auth).then(() => {
         window.location.href = 'login.html';
       });
-    });
-
-    scanItemBtn.addEventListener('click', () => {
-      alert('Barcode scanning feature coming soon! For now, please manually add your items.');
     });
   }
 
