@@ -13,15 +13,15 @@
       --bronze: #cd7f32; --silver: #c0c0c0; --gold: #ffd700;
     }
     html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#f0f7f8 0%,var(--bg)100%);color:#21303b}
-    .wrap{max-width:var(--container);margin:28px auto;padding:20px;display:flex;gap:20px;align-items:flex-start}
+    .wrap{max-width:var(--container);margin:28px auto;padding:20px;display:flex;gap:20px;align-items:flex-start;padding-bottom:120px} /* Added bottom padding */
     .main{flex:1;display:flex;flex-direction:column;gap:18px}
     .sidebar{width:320px;display:flex;flex-direction:column;gap:18px}
-    header.top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:transparent}
+    header.top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:transparent;position:relative}
     .profile{display:flex;align-items:center;gap:12px}
     .avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#ffe9c6,#ffd7a8);display:flex;align-items:center;justify-content:center;font-weight:700;color:#7a4b08}
     .greeting{font-size:18px;font-weight:600}
     .icons{display:flex;gap:12px;align-items:center}
-    .icon-btn{width:36px;height:36px;border-radius:8px;display:inline-grid;place-items:center;background:var(--card);box-shadow:var(--shadow);cursor:pointer}
+    .icon-btn{width:36px;height:36px;border-radius:8px;display:inline-grid;place-items:center;background:var(--card);box-shadow:var(--shadow);cursor:pointer;border:none;font-size:16px}
     .hero{background:linear-gradient(180deg,#0fa3a7 0%,#137b7c 100%);color:#fff;padding:20px;border-radius:14px;box-shadow:var(--shadow);display:flex;gap:18px;align-items:center}
     .hero .text{flex:1}
     .hero h2{margin:0 0 6px;font-size:20px}
@@ -37,7 +37,7 @@
     .stat .num{font-size:20px;font-weight:700}
     .stat .label{font-size:12px;color:var(--muted)}
     .stat.active{background:linear-gradient(90deg,#e6f7f7,#f1fcfe);border:1px solid rgba(19,128,140,0.08)}
-    .list{background:var(--card);padding:18px;border-radius:14px;box-shadow:var(--shadow);min-height:320px}
+    .list{background:var(--card);padding:18px;border-radius:14px;box-shadow:var(--shadow);min-height:320px;max-height:500px;overflow-y:auto} /* Added overflow */
     .item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfeff);box-shadow:0 4px 12px rgba(16,54,63,0.04);margin-bottom:10px}
     .item:last-child{margin-bottom:0}
     .item .img{width:56px;height:56px;border-radius:10px;background:var(--glass);display:flex;align-items:center;justify-content:center;font-weight:600;color:#6b7280}
@@ -48,7 +48,7 @@
     .badge.expired{background:rgba(217,83,79,0.08);color:var(--danger)}
     .badge.soon{background:rgba(255,171,0,0.08);color:#ff8c00}
     .badge.fresh{background:rgba(15,81,50,0.08);color:var(--success)}
-    .check{width:36px;height:36px;border-radius:50%;border:2px solid #e6eef0;display:grid;place-items:center;color:var(--accent-2)}
+    .check{width:36px;height:36px;border-radius:50%;border:2px solid #e6eef0;display:grid;place-items:center;color:var(--accent-2);cursor:pointer}
     .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:var(--shadow)}
     .small-title{font-size:13px;color:var(--muted);margin-bottom:8px}
     .recipe-grid{display:flex;flex-direction:column;gap:8px}
@@ -60,12 +60,12 @@
     .tabs{display:flex;gap:12px;padding:8px}
     .tab{padding:8px 12px;border-radius:999px;cursor:pointer;color:var(--muted);background:transparent}
     .tab.active{background:linear-gradient(90deg,#e6f7f7,#f1fcfe);color:var(--accent-2);font-weight:600;box-shadow:var(--shadow)}
-    .storage-list{background:linear-gradient(180deg,#eaf9f9,#ffffff);padding:14px;border-radius:14px}
+    .storage-list{background:linear-gradient(180deg,#eaf9f9,#ffffff);padding:14px;border-radius:14px;max-height:500px;overflow-y:auto} /* Added overflow */
     .storage-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;background:var(--card);border-radius:10px;margin-bottom:10px;box-shadow:0 6px 14px rgba(16,54,63,0.03)}
     .storage-item .left{display:flex;gap:12px;align-items:center}
     .progress{width:44px;height:44px;border-radius:50%;background:linear-gradient(180deg,#fff,#fbfeff);display:grid;place-items:center;border:6px solid rgba(255,171,0,0.08)}
     .storage-item .meta .sub{font-weight:700;color:#111}
-    .recipe-grid-page{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;padding:12px 0}
+    .recipe-grid-page{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;padding:12px 0;max-height:500px;overflow-y:auto} /* Added overflow */
     .recipe-card{background:var(--card);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform 0.2s}
     .recipe-card:hover{transform:translateY(-4px)}
     .recipe-card .img{width:100%;height:140px;object-fit:cover;display:block}
@@ -82,6 +82,59 @@
     .nav-btn .icon{font-size:18px;display:block}
     .nav-btn.active{color:#fff;font-weight:600}
     .fab{width:64px;height:64px;border-radius:50%;background:linear-gradient(90deg,#ffb84d,#ff8c42);display:grid;place-items:center;color:#fff;font-size:28px;margin-top:-28px;box-shadow:0 12px 30px rgba(255,140,66,0.18);border:6px solid #4FB7B3;cursor:pointer}
+    
+    /* Settings Dropdown */
+    .settings-container {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .settings-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      min-width: 160px;
+      z-index: 1000;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    
+    .settings-dropdown.show {
+      display: block;
+    }
+    
+    .dropdown-item {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+      background: none;
+      text-align: left;
+      font-size: 14px;
+      color: #21303b;
+      transition: background-color 0.2s;
+    }
+    
+    .dropdown-item:hover {
+      background-color: #f8fafb;
+    }
+    
+    .dropdown-item.logout {
+      color: var(--danger);
+    }
+    
+    .dropdown-divider {
+      height: 1px;
+      background: #e6eef0;
+      margin: 4px 0;
+    }
     
     /* Add Item Modal Styles */
     .modal-overlay {
@@ -263,6 +316,8 @@
       border-radius: 14px;
       padding: 20px;
       box-shadow: var(--shadow);
+      max-height: 500px;
+      overflow-y: auto; /* Added overflow */
     }
     
     .recipe-detail-image {
@@ -480,6 +535,9 @@
       display: flex;
       flex-direction: column;
       gap: 24px;
+      max-height: 500px;
+      overflow-y: auto; /* Added overflow */
+      padding-right: 8px;
     }
     
     .achievement-category {
@@ -1217,7 +1275,14 @@
         </div>
         <div class="icons">
           <button class="icon-btn" title="Notifications" id="btnBell">🔔</button>
-          <button class="icon-btn" title="Settings" id="btnLogout">⚙️</button>
+          <div class="settings-container">
+            <button class="icon-btn" title="Settings" id="btnSettings">⚙️</button>
+            <div class="settings-dropdown" id="settingsDropdown">
+              <button class="dropdown-item" id="btnLogout">
+                <span>🚪</span> Logout
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -1446,7 +1511,7 @@
           <button class="notification-filter" data-filter="achievement">Achievements</button>
         </div>
 
-        <div id="notifications-list">
+        <div id="notifications-list" style="max-height:500px;overflow-y:auto">
           <div class="empty-state">
             <div class="icon">🔔</div>
             <p>No notifications yet</p>
@@ -1644,6 +1709,8 @@
   const storageSearch = document.getElementById('storage-search');
   const navButtons = document.querySelectorAll('.nav-btn');
   const btnBell = document.getElementById('btnBell');
+  const btnSettings = document.getElementById('btnSettings');
+  const settingsDropdown = document.getElementById('settingsDropdown');
   const btnLogout = document.getElementById('btnLogout');
   const userAvatar = document.getElementById('userAvatar');
   const userGreeting = document.getElementById('userGreeting');
@@ -3719,6 +3786,32 @@
   function initApp() {
     updateCurrentDate();
     
+    // Settings dropdown functionality
+    btnSettings.addEventListener('click', (e) => {
+      e.stopPropagation();
+      settingsDropdown.classList.toggle('show');
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.settings-container')) {
+        settingsDropdown.classList.remove('show');
+      }
+    });
+    
+    // Logout functionality
+    btnLogout.addEventListener('click', () => {
+      if (unsubscribeItems) {
+        unsubscribeItems();
+      }
+      if (unsubscribeRecipes) {
+        unsubscribeRecipes();
+      }
+      signOut(auth).then(() => {
+        window.location.href = 'login.html';
+      });
+    });
+    
     // Add Item Modal Event Listeners
     navAdd.addEventListener('click', openAddItemModal);
     modalClose.addEventListener('click', closeAddItemModal);
@@ -3844,18 +3937,6 @@
         else if (btn.id === 'nav-storage') showView('storage');
         else if (btn.id === 'nav-recipe') showView('recipe');
         else if (btn.id === 'nav-reward') showView('reward');
-      });
-    });
-
-    btnLogout.addEventListener('click', () => {
-      if (unsubscribeItems) {
-        unsubscribeItems();
-      }
-      if (unsubscribeRecipes) {
-        unsubscribeRecipes();
-      }
-      signOut(auth).then(() => {
-        window.location.href = 'login.html';
       });
     });
   }
