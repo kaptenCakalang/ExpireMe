@@ -708,8 +708,8 @@
     doc,
     updateDoc,
     getDoc,
-    arrayUnion,
-    arrayRemove
+    getDocs,
+    setDoc
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
   // Firebase configuration
@@ -774,13 +774,14 @@
   let unsubscribeItems = null;
   let recipes = [];
   let currentRecipeDetail = null;
+  let unsubscribeRecipes = null;
 
-  // Recipe Database
-  const recipeDatabase = [
+  // Default recipes to upload to Firestore if none exist
+  const defaultRecipes = [
     {
       id: 'recipe1',
       name: 'Creamy Pancakes',
-      image: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800&q=60&auto=format&fit=crop',
+      image: 'https://drive.google.com/uc?export=view&id=1fz24lpxjskFXj6KD9jRxyTNAFwNbVJCy',
       description: 'Fluffy pancakes with a creamy twist',
       prepTime: '15 min',
       cookTime: '20 min',
@@ -808,7 +809,7 @@
     {
       id: 'recipe2',
       name: 'Berry Smoothie',
-      image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=60&auto=format&fit=crop',
+      image: 'https://drive.google.google/uc?export=view&id=1YOUR_DRIVE_FILE_ID_2',
       description: 'Refreshing berry smoothie packed with nutrients',
       prepTime: '5 min',
       cookTime: '0 min',
@@ -834,7 +835,7 @@
     {
       id: 'recipe3',
       name: 'Vegetable Stir Fry',
-      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=60&auto=format&fit=crop',
+      image: 'https://drive.googlegoogle.com/uc?export=view&id=1YOUR_DRIVE_FILE_ID_3',
       description: 'Quick and healthy vegetable stir fry',
       prepTime: '10 min',
       cookTime: '15 min',
@@ -864,7 +865,7 @@
     {
       id: 'recipe4',
       name: 'Chicken Pasta',
-      image: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=800&q=60&auto=format&fit=crop',
+      image: 'https://drive.google.google/uc?export=view&id=1YOUR_DRIVE_FILE_ID_4',
       description: 'Creamy chicken pasta with herbs',
       prepTime: '15 min',
       cookTime: '25 min',
@@ -906,6 +907,78 @@
   const today = new Date().toISOString().split('T')[0];
   itemExpiry.min = today;
 
+  // Function to upload default recipes to Firestore
+  async function initializeDefaultRecipes() {
+    try {
+      console.log('Checking for existing recipes in Firestore...');
+      const recipesRef = collection(db, 'recipes');
+      const querySnapshot = await getDocs(recipesRef);
+      
+      console.log('Number of existing recipes:', querySnapshot.size);
+      
+      if (querySnapshot.size === 0) {
+        console.log('No recipes found in Firestore. Adding default recipes...');
+        
+        for (const recipe of defaultRecipes) {
+          try {
+            // Create a document reference with the specified ID
+            const recipeRef = doc(db, 'recipes', recipe.id);
+            
+            // Create recipe data without the id field
+            const recipeData = {
+              name: recipe.name,
+              image: recipe.image,
+              description: recipe.description,
+              prepTime: recipe.prepTime,
+              cookTime: recipe.cookTime,
+              difficulty: recipe.difficulty,
+              servings: recipe.servings,
+              ingredients: recipe.ingredients,
+              instructions: recipe.instructions,
+              totalCost: recipe.totalCost,
+              createdAt: serverTimestamp()
+            };
+            
+            // Check if recipe already exists
+            const recipeDoc = await getDoc(recipeRef);
+            
+            if (!recipeDoc.exists()) {
+              await setDoc(recipeRef, recipeData);
+              console.log(`✓ Added recipe: ${recipe.name} (ID: ${recipe.id})`);
+            } else {
+              console.log(`⚠ Recipe ${recipe.name} already exists, skipping...`);
+            }
+          } catch (recipeError) {
+            console.error(`Error adding recipe ${recipe.name}:`, recipeError);
+          }
+        }
+        
+        console.log('Default recipes initialization completed!');
+      } else {
+        console.log('Recipes already exist in Firestore. Skipping initialization.');
+      }
+    } catch (error) {
+      console.error('Error initializing default recipes:', error);
+      console.error('Error details:', error.code, error.message);
+    }
+  }
+
+  // Function to handle image loading with fallback
+  function handleImageLoad(imgElement, imageUrl) {
+    // Create a white image as fallback (SVG)
+    const whiteImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9IiNmZmZmZmYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PC9zdmc+';
+    
+    // Set up error handler
+    imgElement.onerror = function() {
+      console.warn(`Failed to load image: ${imageUrl}. Using fallback.`);
+      this.src = whiteImage;
+      this.onerror = null; // Prevent infinite loop if fallback also fails
+    };
+    
+    // Set the image source
+    imgElement.src = imageUrl;
+  }
+
   // Auth Check
   onAuthStateChanged(auth, (user) => {
     if (!user) {
@@ -917,8 +990,14 @@
       // Update user interface
       updateUserInterface(user);
       
+      // Initialize default recipes (only if collection is empty)
+      initializeDefaultRecipes();
+      
       // Load user items
       loadUserItems();
+      
+      // Load recipes from Firestore
+      loadRecipes();
     }
   });
 
@@ -954,7 +1033,7 @@
           if (snapshot.empty) {
             console.log('No items found for user');
             showEmptyState();
-            updateRecipes();
+            updateRecipesAvailability();
             return;
           }
           
@@ -1006,7 +1085,7 @@
           renderHome('expired');
           renderStorage();
           updateHeroMessage();
-          updateRecipes();
+          updateRecipesAvailability();
           
         }, 
         (error) => {
@@ -1031,6 +1110,69 @@
     }
   }
 
+  // Load recipes from Firestore
+  function loadRecipes() {
+    try {
+      const recipesRef = collection(db, 'recipes');
+      const q = query(recipesRef, orderBy('name'));
+      
+      // Set up real-time listener for recipes
+      unsubscribeRecipes = onSnapshot(q, 
+        (snapshot) => {
+          console.log('Recipes snapshot received, docs count:', snapshot.size);
+          recipes = [];
+          
+          if (snapshot.empty) {
+            console.log('No recipes found in Firestore');
+            recipeGridEl.innerHTML = `
+              <div class="empty-state">
+                <div class="icon">📚</div>
+                <p>No recipes available</p>
+                <p>Add recipes to the database to get started!</p>
+              </div>
+            `;
+            return;
+          }
+          
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            const recipe = {
+              id: doc.id,
+              name: data.name || 'Unnamed Recipe',
+              image: data.image || '',
+              description: data.description || '',
+              prepTime: data.prepTime || 'N/A',
+              cookTime: data.cookTime || 'N/A',
+              difficulty: data.difficulty || 'N/A',
+              servings: data.servings || 1,
+              ingredients: data.ingredients || [],
+              instructions: data.instructions || [],
+              totalCost: data.totalCost || 0
+            };
+            recipes.push(recipe);
+          });
+          
+          console.log('Loaded recipes from Firestore:', recipes.length);
+          updateRecipesAvailability();
+          
+        }, 
+        (error) => {
+          console.error('Error loading recipes:', error);
+          recipeGridEl.innerHTML = `
+            <div class="empty-state">
+              <div class="icon">❌</div>
+              <p>Error loading recipes</p>
+              <p>Please check console for details</p>
+              <p style="font-size:12px">${error.message}</p>
+            </div>
+          `;
+        }
+      );
+    } catch (error) {
+      console.error('Error loading recipes:', error);
+    }
+  }
+
   // Check if user has enough ingredients for a recipe
   function checkRecipeAvailability(recipe) {
     const availability = {
@@ -1040,8 +1182,13 @@
       availableCost: 0
     };
     
+    if (!recipe.ingredients || recipe.ingredients.length === 0) {
+      availability.canMake = false;
+      return availability;
+    }
+    
     recipe.ingredients.forEach(ingredient => {
-      // Find matching items in user's pantry
+      // Find matching items in user's pantry (case-insensitive partial match)
       const matchingItems = userItems.filter(item => 
         item.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
         ingredient.name.toLowerCase().includes(item.name.toLowerCase())
@@ -1056,7 +1203,7 @@
             available: totalQuantity,
             items: matchingItems
           });
-          availability.availableCost += ingredient.cost;
+          availability.availableCost += (ingredient.cost || 0);
         } else {
           availability.canMake = false;
           availability.missingIngredients.push({
@@ -1079,10 +1226,21 @@
   }
 
   // Update recipes based on available ingredients
-  function updateRecipes() {
-    console.log('Updating recipes based on user items:', userItems);
+  function updateRecipesAvailability() {
+    console.log('Updating recipes based on user items:', userItems.length);
     
-    recipes = recipeDatabase.map(recipe => {
+    if (recipes.length === 0) {
+      recipeGridEl.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">📚</div>
+          <p>No recipes available</p>
+          <p>Add recipes to the database to get started!</p>
+        </div>
+      `;
+      return;
+    }
+    
+    const updatedRecipes = recipes.map(recipe => {
       const availability = checkRecipeAvailability(recipe);
       return {
         ...recipe,
@@ -1090,12 +1248,14 @@
       };
     });
     
+    // Update the recipes array with availability info
+    recipes = updatedRecipes;
     renderRecipes();
   }
 
   // Render recipe list
   function renderRecipes() {
-    console.log('Rendering recipes:', recipes);
+    console.log('Rendering recipes:', recipes.length);
     recipeGridEl.innerHTML = '';
     
     if (recipes.length === 0) {
@@ -1110,16 +1270,16 @@
     }
     
     recipes.forEach(recipe => {
-      const canMake = recipe.availability.canMake;
-      const availableCount = recipe.availability.availableIngredients.length;
-      const totalCount = recipe.ingredients.length;
+      const canMake = recipe.availability ? recipe.availability.canMake : false;
+      const availableCount = recipe.availability ? recipe.availability.availableIngredients.length : 0;
+      const totalCount = recipe.ingredients ? recipe.ingredients.length : 0;
       
       const recipeCard = document.createElement('div');
       recipeCard.className = 'recipe-card';
       recipeCard.dataset.id = recipe.id;
       
       recipeCard.innerHTML = `
-        <img class="img" src="${recipe.image}" alt="${recipe.name}">
+        <img class="img" src="" alt="${recipe.name}" loading="lazy">
         <div class="info">
           <div class="title">${recipe.name}</div>
           <div class="time">⏱️ ${recipe.prepTime} • 👥 ${recipe.servings} servings</div>
@@ -1137,6 +1297,15 @@
         </div>
       `;
       
+      // Handle image loading with fallback
+      const imgElement = recipeCard.querySelector('.img');
+      if (recipe.image && recipe.image.trim() !== '') {
+        handleImageLoad(imgElement, recipe.image);
+      } else {
+        // Use white image if no image URL
+        imgElement.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9IiNmZmZmZmYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PC9zdmc+';
+      }
+      
       recipeCard.addEventListener('click', () => {
         showRecipeDetail(recipe);
       });
@@ -1151,54 +1320,62 @@
     recipeListView.style.display = 'none';
     recipeDetailView.style.display = 'block';
     
-    const availability = recipe.availability;
+    const availability = recipe.availability || { canMake: false, availableIngredients: [] };
     const canMake = availability.canMake;
     
     let ingredientsHTML = '';
-    recipe.ingredients.forEach((ingredient, index) => {
-      const matchingItems = userItems.filter(item => 
-        item.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
-        ingredient.name.toLowerCase().includes(item.name.toLowerCase())
-      );
-      const totalAvailable = matchingItems.reduce((sum, item) => sum + item.quantity, 0);
-      const hasEnough = totalAvailable >= ingredient.quantity;
-      
-      ingredientsHTML += `
-        <div class="ingredient-item">
-          <div class="ingredient-check ${hasEnough ? 'available' : 'unavailable'}">
-            ${hasEnough ? '✓' : '✗'}
+    if (recipe.ingredients && recipe.ingredients.length > 0) {
+      recipe.ingredients.forEach((ingredient, index) => {
+        const matchingItems = userItems.filter(item => 
+          item.name.toLowerCase().includes(ingredient.name.toLowerCase()) ||
+          ingredient.name.toLowerCase().includes(item.name.toLowerCase())
+        );
+        const totalAvailable = matchingItems.reduce((sum, item) => sum + item.quantity, 0);
+        const hasEnough = totalAvailable >= ingredient.quantity;
+        
+        ingredientsHTML += `
+          <div class="ingredient-item">
+            <div class="ingredient-check ${hasEnough ? 'available' : 'unavailable'}">
+              ${hasEnough ? '✓' : '✗'}
+            </div>
+            <div class="ingredient-details">
+              <div class="ingredient-name">${ingredient.name.charAt(0).toUpperCase() + ingredient.name.slice(1)}</div>
+              <div class="ingredient-quantity">${ingredient.quantity} ${ingredient.unit} ($${(ingredient.cost || 0).toFixed(2)})</div>
+            </div>
+            <div class="ingredient-status ${hasEnough ? 'available' : 'unavailable'}">
+              ${hasEnough ? `Available: ${totalAvailable} ${ingredient.unit}` : `Need: ${ingredient.quantity - totalAvailable} more`}
+            </div>
           </div>
-          <div class="ingredient-details">
-            <div class="ingredient-name">${ingredient.name.charAt(0).toUpperCase() + ingredient.name.slice(1)}</div>
-            <div class="ingredient-quantity">${ingredient.quantity} ${ingredient.unit} ($${ingredient.cost.toFixed(2)})</div>
-          </div>
-          <div class="ingredient-status ${hasEnough ? 'available' : 'unavailable'}">
-            ${hasEnough ? `Available: ${totalAvailable} ${ingredient.unit}` : `Need: ${ingredient.quantity - totalAvailable} more`}
-          </div>
-        </div>
-      `;
-    });
+        `;
+      });
+    } else {
+      ingredientsHTML = `<p style="color:var(--muted);text-align:center">No ingredients listed for this recipe.</p>`;
+    }
     
     let instructionsHTML = '';
-    recipe.instructions.forEach((instruction, index) => {
-      instructionsHTML += `
-        <div class="instruction-step">
-          <div class="instruction-number">${index + 1}</div>
-          <div>${instruction}</div>
-        </div>
-      `;
-    });
+    if (recipe.instructions && recipe.instructions.length > 0) {
+      recipe.instructions.forEach((instruction, index) => {
+        instructionsHTML += `
+          <div class="instruction-step">
+            <div class="instruction-number">${index + 1}</div>
+            <div>${instruction}</div>
+          </div>
+        `;
+      });
+    } else {
+      instructionsHTML = `<p style="color:var(--muted);text-align:center">No instructions available for this recipe.</p>`;
+    }
     
     recipeDetailContent.innerHTML = `
-      <img class="recipe-detail-image" src="${recipe.image}" alt="${recipe.name}">
+      <img class="recipe-detail-image" src="" alt="${recipe.name}" loading="lazy">
       <h2 class="recipe-detail-title">${recipe.name}</h2>
       <div class="recipe-detail-meta">
-        <span>⏱️ ${recipe.prepTime} prep</span>
-        <span>🔥 ${recipe.cookTime} cook</span>
-        <span>📊 ${recipe.difficulty}</span>
-        <span>👥 ${recipe.servings} servings</span>
+        <span>⏱️ ${recipe.prepTime || 'N/A'} prep</span>
+        <span>🔥 ${recipe.cookTime || 'N/A'} cook</span>
+        <span>📊 ${recipe.difficulty || 'N/A'}</span>
+        <span>👥 ${recipe.servings || 'N/A'} servings</span>
       </div>
-      <p style="color:var(--muted);margin-bottom:20px">${recipe.description}</p>
+      <p style="color:var(--muted);margin-bottom:20px">${recipe.description || 'No description available.'}</p>
       
       <div class="recipe-section">
         <h3 class="recipe-section-title">Ingredients</h3>
@@ -1216,15 +1393,15 @@
       
       <div class="recipe-cost">
         <h3 class="recipe-section-title">Cost Breakdown</h3>
-        ${recipe.ingredients.map(ing => `
+        ${recipe.ingredients ? recipe.ingredients.map(ing => `
           <div class="cost-row">
             <span>${ing.name.charAt(0).toUpperCase() + ing.name.slice(1)}</span>
-            <span>$${ing.cost.toFixed(2)}</span>
+            <span>$${(ing.cost || 0).toFixed(2)}</span>
           </div>
-        `).join('')}
+        `).join('') : '<p style="color:var(--muted);text-align:center">No cost information available.</p>'}
         <div class="cost-row cost-total">
           <span>Total Estimated Cost</span>
-          <span>$${recipe.totalCost.toFixed(2)}</span>
+          <span>$${recipe.totalCost ? recipe.totalCost.toFixed(2) : '0.00'}</span>
         </div>
       </div>
       
@@ -1233,6 +1410,15 @@
       </button>
       <div id="cookMessage" style="margin-top:12px;text-align:center;font-size:13px;min-height:20px"></div>
     `;
+    
+    // Handle image loading with fallback
+    const detailImgElement = recipeDetailContent.querySelector('.recipe-detail-image');
+    if (recipe.image && recipe.image.trim() !== '') {
+      handleImageLoad(detailImgElement, recipe.image);
+    } else {
+      // Use white image if no image URL
+      detailImgElement.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9IiNmZmZmZmYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PC9zdmc+';
+    }
     
     // Add event listener to cook button
     const cookBtn = document.getElementById('cookRecipeBtn');
@@ -1299,7 +1485,7 @@
         cookBtn.textContent = '🍳 Cook This Recipe';
         
         // Show recipe completion modal
-        alert(`🎉 Recipe completed!\n\nYou cooked "${recipe.name}" successfully!\nTotal cost: $${recipe.totalCost.toFixed(2)}\n\nIngredients have been deducted from your pantry.`);
+        alert(`🎉 Recipe completed!\n\nYou cooked "${recipe.name}" successfully!\nTotal cost: $${recipe.totalCost ? recipe.totalCost.toFixed(2) : '0.00'}\n\nIngredients have been deducted from your pantry.`);
         
         // Go back to recipe list
         recipeDetailView.style.display = 'none';
@@ -1506,7 +1692,7 @@
     if (view === 'recipe') {
       recipeListView.style.display = 'block';
       recipeDetailView.style.display = 'none';
-      updateRecipes();
+      updateRecipesAvailability();
     } else if (view === 'storage') {
       storageSearch.focus();
       renderStorage(); // Refresh storage view when switching to it
@@ -1686,6 +1872,9 @@
       // Unsubscribe from real-time updates before logging out
       if (unsubscribeItems) {
         unsubscribeItems();
+      }
+      if (unsubscribeRecipes) {
+        unsubscribeRecipes();
       }
       signOut(auth).then(() => {
         window.location.href = 'login.html';
